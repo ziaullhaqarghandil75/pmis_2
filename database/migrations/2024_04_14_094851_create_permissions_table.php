@@ -13,8 +13,14 @@ return new class extends Migration
     {
         Schema::create('permissions', function (Blueprint $table) {
             $table->id()->unsigned();
-            $table->string('name_en');
-            $table->string('name_da');
+            $table->string('name');
+            $table->string('description');
+            
+            $table->unsignedBigInteger('permission_gategory_id');
+            $table->foreign('permission_gategory_id')->references('id')->on('permission_categories')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+                
             $table->enum('status', [0, 1]);
             $table->timestamps();
         });
