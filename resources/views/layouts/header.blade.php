@@ -8,16 +8,10 @@
                 <!-- Logo icon --><b>
                     <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
                     <!-- Dark Logo icon -->
-                    <img src="../assets/images/logo-icon.png" alt="homepage" class="dark-logo" />
+                    <img width="100px" src="{{ asset('assets/images/logo.png') }}" alt="شاروالی کابل" class="dark-logo" />
                     <!-- Light Logo icon -->
-                    <img src="../assets/images/logo-light-icon.png" alt="homepage" class="light-logo" />
+                    <img width="100px" src="{{ asset('assets/images/logo.png') }}" alt="شاروالی کابل" class="light-logo" />
                 </b>
-                <!--End Logo icon -->
-                <!-- Logo text --><span>
-                 <!-- dark Logo text -->
-                 <img src="../assets/images/logo-text.png" alt="homepage" class="dark-logo" />
-                 <!-- Light Logo text -->
-                 <img src="../assets/images/logo-light-text.png" class="light-logo" alt="homepage" /></span> </a>
         </div>
         <!-- ============================================================== -->
         <!-- End Logo -->
@@ -42,7 +36,7 @@
                 <!-- User Profile -->
                 <!-- ============================================================== -->
                 <li class="nav-item dropdown u-pro">
-                    <a class="nav-link dropdown-toggle waves-effect waves-dark profile-pic" href="" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="../assets/images/users/1.jpg" alt="user" class=""> <span class="hidden-md-down">Admin &nbsp;<i class="fa fa-angle-down"></i></span> </a>
+                    <a class="nav-link dropdown-toggle waves-effect waves-dark profile-pic" href="" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img width="35" height="30" src="{{ asset('img/user.jpg') }}" alt="user" class=""> <span class="hidden-md-down">{{ auth()->user()->name ." ". auth()->user()->last_name}} &nbsp;<i class="fa fa-angle-down"></i></span> </a>
                     <div class="dropdown-menu dropdown-menu-end animated flipInY">
                         <!-- text-->
                         <a href="javascript:void(0)" class="dropdown-item"><i class="ti-user"></i>&nbsp;پروفایل</a>
@@ -53,7 +47,11 @@
                         <!-- text-->
                         <div class="dropdown-divider"></div>
                         <!-- text-->
-                        <a href="pages-login.html" class="dropdown-item"><i class="fa fa-power-off"></i>&nbsp;خروح</a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="dropdown-item"><i class="fa fa-power-off"></i>&nbsp;خروح</a>
+                        </form>
+
                         <!-- text-->
                     </div>
                 </li>

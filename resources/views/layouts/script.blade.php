@@ -59,7 +59,7 @@
         @elseif (Session::has('success'))
            $.toast({
                 heading: '{{ Session::get('success') }}',
-                position: 'top-lift',
+                position: 'top-right',
                 loaderBg:'#ff6849',
                 icon: 'success',
                 hideAfter: 3500, 

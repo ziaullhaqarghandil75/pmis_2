@@ -151,9 +151,10 @@
                                     @foreach($permissions as $permission)
                                         @if($permission->permission_gategory_id == $permission_category->id)
                                             @if($permission->status == 0)
-                                                <button class="btn btn-danger text-white">{{ $permission->description }}/button>
-                                            @endif  
-                                            <button class="btn btn-info text-white">{{ $permission->description }}</button>
+                                                <button class="btn btn-danger text-white">{{ $permission->description }}</button>
+                                            @else
+                                                <button class="btn btn-info text-white"> {{ $permission->description }} </button>
+                                            @endif 
                                         @endif
                                     @endforeach
                                 </td>

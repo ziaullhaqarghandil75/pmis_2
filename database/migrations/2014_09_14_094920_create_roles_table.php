@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('goal_categores', function (Blueprint $table) {
+        Schema::create('roles', function (Blueprint $table) {
             $table->id()->unsigned();
-            $table->string('name_en');
-            $table->string('name_da');
+            $table->string('name');
+            $table->string('description');
+            $table->enum('status', [0, 1]);
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('goal_categores');
+        Schema::dropIfExists('roles');
     }
 };

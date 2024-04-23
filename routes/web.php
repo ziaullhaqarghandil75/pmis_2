@@ -2,9 +2,16 @@
 
 use App\Http\Controllers\AccountSetting\PermissionCategoryController;
 use App\Http\Controllers\AccountSetting\PermissionController;
+use App\Http\Controllers\AccountSetting\RoleController;
+use App\Http\Controllers\AccountSetting\UserController;
 use App\Http\Controllers\plan\DepratmentController;
+use App\Http\Controllers\Plan\DistrictController;
+use App\Http\Controllers\Plan\GoalCategoryController;
+use App\Http\Controllers\Plan\GoalController;
+use App\Http\Controllers\Plan\UnitController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\Rules\Can;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,13 +24,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-Route::resource('/permission', PermissionController::class);
-Route::resource('/permission_category', PermissionCategoryController::class);
-Route::resource('/role', PermissionController::class);
-Route::resource('/department', DepratmentController::class);
+
 
 // Route::get('/permission', [PermissionController::class, 'index'])->name('permission.index');
 // Route::resource('/role', ::class);
@@ -34,9 +35,28 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/', function () {
+        return view('welcome');
+    });
+    Route::resource('/user', UserController::class);
+    Route::resource('/permission', PermissionController::class);
+    Route::resource('/permission_category', PermissionCategoryController::class);
+
+    Route::resource('/role', RoleController::class);
+    Route::get('/status/{id}', [RoleController::class,'status_role'])->name('status.status_role');
+
+    Route::resource('/department', DepratmentController::class);
+    Route::patch('/department', [DepratmentController::class, 'status'])->name('department.status');
+
+    Route::resource('/district', DistrictController::class);
+    Route::resource('/goal_category', GoalCategoryController::class);
+    Route::resource('/goal', GoalController::class);
+    
+    Route::resource('/unit', UnitController::class);
+
+    // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

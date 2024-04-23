@@ -14,7 +14,8 @@ class PermissionController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
+    {   
+
         $permission_categories = PermissionCategory::get();
         $permissions = Permission::get();
 

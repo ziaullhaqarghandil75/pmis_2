@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('goals', function (Blueprint $table) {
             $table->id()->unsigned();
-            $table->string('name_en');
-            $table->string('name_da');
-            $table->unsignedBigInteger('gole_category_id');
-            $table->foreign('gole_category_id')->references('id')->on('goal_categores')
+            $table->string('gole_name')->unique();
+            $table->unsignedBigInteger('goal_category_id');
+            $table->foreign('category_id')->references('id')->on('goal_categories')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->timestamps();
