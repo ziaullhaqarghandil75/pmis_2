@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Plan;
 
 use App\Http\Controllers\Controller;
+use App\Models\Plan\Unit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class UnitController extends Controller
 {
@@ -12,7 +15,14 @@ class UnitController extends Controller
      */
     public function index()
     {
-        //
+        if(!(auth::user()->can('view_unit') and auth::user()->can('units'))){
+            return view('layouts.403'); 
+        }
+        
+        $units = Unit::get();
+        $edit_unit = false;
+
+        return view('plan.unit', compact('edit_unit','units'));
     }
 
     /**
@@ -20,6 +30,9 @@ class UnitController extends Controller
      */
     public function create()
     {
+        if(!(auth::user()->can('add_unit') and auth::user()->can('units'))){
+            return view('layouts.403');
+        }
         //
     }
 
@@ -28,7 +41,21 @@ class UnitController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if(!(auth::user()->can('add_unit') and auth::user()->can('units'))){
+            return view('layouts.403');
+        }
+         $request->validate([
+            'unit_name_fa' => 'required|unique:'.Unit::class,
+            'unit_name_en' => 'required|unique:'.Unit::class,
+        ]);
+      
+        // here we will insert product in db
+        $unit = new Unit();
+        $unit->unit_name_fa = $request->unit_name_fa;
+        $unit->unit_name_en = $request->unit_name_en;
+        $unit->save();
+
+        return redirect()->route('unit.index')->with('success', 'واحد شما اضافه شد.');
     }
 
     /**
@@ -36,7 +63,9 @@ class UnitController extends Controller
      */
     public function show(string $id)
     {
-        //
+        if(!(auth::user()->can('view_unit') and auth::user()->can('units'))){
+            return view('layouts.403'); 
+        }
     }
 
     /**
@@ -44,7 +73,12 @@ class UnitController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        if(!(auth::user()->can('edit_unit') and auth::user()->can('units'))){
+            return view('layouts.403');
+        }
+        $units = Unit::get();
+        $edit_unit = Unit::find($id);
+        return view('plan.unit', compact('edit_unit','units'));
     }
 
     /**
@@ -52,7 +86,20 @@ class UnitController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        if(!(auth::user()->can('edit_unit') and auth::user()->can('units'))){
+            return view('layouts.403');
+        }
+        $request->validate([
+            'unit_name_fa' => 'required',
+            'unit_name_en' => 'required',
+        ]);
+       
+        $update = Unit::find($id);
+        $update->update([
+            'unit_name_fa' => $request->unit_name_fa,
+            'unit_name_en' => $request->unit_name_en,
+        ]);
+        return redirect()->route('unit.index')->with('success', ' معلومات واحد شما ویرایش شد.');
     }
 
     /**
@@ -60,6 +107,11 @@ class UnitController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        if(!(auth::user()->can('delete_unit') and auth::user()->can('units'))){
+            return view('layouts.403');
+        }
+        $delete = Unit::find($id);
+        $delete->delete();
+        return redirect()->route('unit.index')->with('warning', 'واحد حذف گردید.');
     }
 }

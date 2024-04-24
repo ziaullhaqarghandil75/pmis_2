@@ -19,24 +19,31 @@ return new class extends Migration
                 ->onUpdate('cascade');
 
             $table->string('name');
-            $table->unsignedBigInteger('dimension_id');
-            $table->foreign('dimension_id')->references('id')->on('type_dimensions')
+            $table->BigInteger('length')->nullable();
+            $table->BigInteger('width')->nullable();
+            $table->BigInteger('number')->nullable();
+
+            $table->unsignedBigInteger('unit_id');
+            $table->foreign('unit_id')->references('id')->on('unit_id')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
-            $table->integer('dimension_value');
-            $table->unsignedBigInteger('district_id');
-            $table->foreign('district_id')->references('id')->on('districts')
+            $table->unsignedBigInteger('impliment_department_id');
+            $table->foreign('impliment_department_id')->references('id')->on('departments')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
-            $table->unsignedBigInteger('department_id');
-            $table->foreign('department_id')->references('id')->on('departments')
+            $table->unsignedBigInteger('management_department_id');
+            $table->foreign('management_department_id')->references('id')->on('departments')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
-            $table->enum('transitional', [0, 1]);
-            $table->enum('status', [0, 1]);
+            $table->unsignedBigInteger('design_department_id');
+            $table->foreign('design_department_id')->references('id')->on('departments')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+
+            $table->enum('project_type', [0, 1]);
             $table->timestamps();
         });
     }

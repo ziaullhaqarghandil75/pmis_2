@@ -29,17 +29,20 @@
                             @can('goals')
                             <li><a href="{{ route('goal.index') }}">اهداف </a></li>
                             @endcan
+                            @can('units')
+                            <li><a href="{{ route('unit.index') }}">واحد ها</a></li>
+                            @endcan
+                            @can('districts')
+                            <li><a href="{{ route('district.index') }}">نواحی</a></li>
+                            @endcan
                         </ul>
                     <li>
                 @endcan
-                @can('setting_plans')
-                    <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="icon-people"></i><span class="hide-menu">تنظیمات پلان</span></a>
+                @can('setting_projects')
+                    <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="icon-people"></i><span class="hide-menu">تنظیمات پروژه ها</span></a>
                         <ul aria-expanded="false" class="collapse">
-                            @can('departments')
-                            <li><a href="{{ route('department.index') }}">دیپارتمنت ها</a></li>
-                            @endcan
-                            @can('goals')
-                            <li><a href="{{ route('goal.index') }}">اهداف </a></li>
+                            @can('projects')
+                            <li><a href="{{ route('project.index') }}">پروژه ها</a></li>
                             @endcan
                         </ul>
                     <li>

@@ -17,7 +17,7 @@ class UserController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
+    { 
         // auth::user()->hasRole('admin');
         // dd(auth::user()->hasRole('admin'));
         if(!(auth::user()->can('view_user') and auth::user()->can('users'))){
@@ -51,7 +51,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         if(!(auth::user()->can('add_user') and auth::user()->can('users'))){
-            return view('layouts.403');
+            return view('layouts.403'); 
         }
         $request->validate([
             'name' => ['required','string'],

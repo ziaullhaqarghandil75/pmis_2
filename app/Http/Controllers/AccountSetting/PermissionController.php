@@ -16,7 +16,7 @@ class PermissionController extends Controller
     public function index()
     {   
 
-        $permission_categories = PermissionCategory::get();
+        $permission_categories = PermissionCategory::orderBy('created_at', 'desc')->get();
         $permissions = Permission::get();
 
         return view('account_settings.permission', compact('permission_categories', 'permissions'));
