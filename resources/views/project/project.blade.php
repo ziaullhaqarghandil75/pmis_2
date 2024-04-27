@@ -14,9 +14,8 @@
     <div class="col-lg-12 ">
         <div class="card">
             <div class="card-header bg-info">
-            
+
                 <h4 class="m-b-0 text-white">لیست پروژه ها</h4>
-            
             </div>
             <div class="card-body">
             @can("add_project")
@@ -29,11 +28,10 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>نام</th>
                         <th>هدف</th>
-                        <th>دسته بندی هدف</th>
+                        <!-- <th>دسته بندی هدف</th> -->
                         <th>اسم پروژه</th>
-                        <th>ابعاد</th>
+                        <th colspan="2">ابعاد</th>
                         <th>موقعیت</th>
                         <th>بودیجه</th>
                         <th>تطبیق کننده</th>
@@ -45,7 +43,36 @@
                     </tr>
                 </thead>
                 <tbody>
-                   
+                    <?php $key = 1 ?>
+                    @foreach($projects as $project)
+                        <tr>
+                            <td>{{ $key++ }}</td>
+                            <td>@foreach($project->goals as $goal){{ $goal->name }} @endforeach</td>
+                            <td>{{ $project->name }}</td>
+                            <td>طول : {{ $project->length }}</td>
+                            <td>عرض :{{ $project->width }}</td>
+                            <td>@foreach($project->districts as $district){{ $district->name }} @endforeach</td>
+                            <td>10000 افغانی</td>
+                            <td>@foreach($project->impliment_departments as $impliment_department){{ $impliment_department->name_da }} @endforeach</td>
+                            <td>@foreach($project->management_departments as $management_department){{ $management_department->name_da }} @endforeach</td>
+                            <td>@foreach($project->design_departments as $design_department){{ $design_department->name_da }} @endforeach</td>
+                            <td>{{ ($project->project_type == '1') ? 'انتقالی':'جدید' }}</td>
+                            <td>در حال دیزاین</td>
+                            <td>
+                                <div>
+                                    
+                                    <a href="{{ route('project.edit',$project->id) }}" type="submit" class="btn btn-info text-white">توضیحات <i class="fas fa-eye-dropper"></i> </a>
+                                </div>
+                                <a href="{{ route('project.edit',$project->id) }}" type="submit" class="btn btn-success text-white">ویرایش <i class="fas fa-eye-dropper"></i> </a>
+                                <form action="{{ route('project.destroy',$project->id) }}" method="POST">
+                                    @method('delete')
+                                    @csrf
+                                    <button type="submit" class="btn waves-effect waves-light btn-danger text-white">حذف <i class="fas fa-trash-alt"></i> </button>
+                                </form>
+                            </td>
+                                
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

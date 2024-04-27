@@ -37,6 +37,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
+@if($errors->any())
+    @foreach($errors->all() as $error)
+        <script>
+                $.toast({
+                    heading: '{{ $error }}  ',
+                    position: 'top-right',
+                    loaderBg:'#ff6849',
+                    icon: 'error',
+                    hideAfter: 3500
+                    
+                });
+        </script>     
+    @endforeach
+@endif
     <script>
         @if (Session::has('info'))
             $.toast({

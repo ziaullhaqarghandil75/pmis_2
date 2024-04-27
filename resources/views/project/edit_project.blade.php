@@ -1,16 +1,16 @@
 @extends('layouts.master')
 @section('style')
-    <link href="../assets/node_modules/select2/dist/css/select2.min.css" rel="stylesheet" type="text/css" />
-    <link href="../assets/node_modules/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" />
-    <link href="../assets/node_modules/multiselect/css/multi-select.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/node_modules/select2/dist/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/node_modules/bootstrap-select/bootstrap-select.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/node_modules/multiselect/css/multi-select.css') }}" rel="stylesheet" type="text/css" />
 @endsection
 @section('content')
 <div class="row page-titles">
     <div class="col-md-12 align-self-center text-end">
         <div class="d-flex justify-content-end align-items-center">
             <ol class="breadcrumb justify-content-end">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">افزودن پروژه جدید</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('user.index') }}">پروژه ها</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">ویرایش پروژه جدید</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('project.index') }}">پروژه ها</a></li>
                 <li class="breadcrumb-item active">تنظیمات پروژه ها</li>
             </ol>
         </div>
@@ -20,10 +20,11 @@
 <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12">
         <div class="card">
-            <form action="{{ route('project.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('project.update', $project->id ) }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <div class="card-header bg-info">
-                    <h4 class="m-b-0 text-white">افزودن پروژه جدید</h4>
+                @method('put')
+                <div class="card-header bg-success">
+                    <h4 class="m-b-0 text-white">ویرایش پروژه جدید</h4>
                 </div>
                 <div class="card-body">
                 </div>
@@ -35,8 +36,8 @@
                                 <select name="goal_id" class="select2 form-control form-select select2-hidden-accessible" style="width: 100%" data-select2-id="2" tabindex="-1" aria-hidden="true">
                                     <option value="0" data-select2-id="2">انتخاب</option>
                                     <!-- <optgroup label="Alaskan/Hawaiian Time Zone" data-select2-id="13"> -->
-                                    @foreach($goles as $gole)   
-                                    <option value="{{ $gole->id }}">{{ $gole->name }}</option>
+                                    @foreach($goals as $goal)   
+                                    <option value="{{ $goal->id }}" {{ ($project->goal_id == $goal->id) ? 'selected':'' }} >{{ $goal->name }}</option>
                                     @endforeach
                                     <!-- </optgroup>  -->
                                 </select>                                  
@@ -47,7 +48,7 @@
                         <div class="form-group has-danger row">
                             <label class="control-label text-end col-md-2">اسم پروژه*   </label>
                             <div class="col-md-9">
-                                <input type="text" name="name"
+                                <input value="{{ $project->name }}" type="text" name="name"
                                     class="@error('name') is-invalid @enderror form-control" placeholder="">
                                 @error('name')
                                 <p class="invalid-feedback">{{ $message }}</p>
@@ -59,7 +60,7 @@
                         <div class="form-group has-danger row">
                             <label class="control-label text-end col-md-2">طول</label>
                             <div class="col-md-8">
-                                <input type="number" name="length"
+                                <input value="{{ $project->length }}" type="number" name="length"
                                     class="@error('length') is-invalid @enderror form-control" placeholder="">
                                 @error('length')
                                 <p class="invalid-feedback">{{ $message }}</p>
@@ -71,7 +72,7 @@
                         <div class="form-group has-danger row">
                             <label class="control-label text-end col-md-2">عرض</label>
                             <div class="col-md-9">
-                                <input type="number" name="width"
+                                <input value="{{ $project->width }}" type="number" name="width"
                                     class="@error('width') is-invalid @enderror form-control" placeholder="">
                                 @error('width')
                                 <p class="invalid-feedback">{{ $message }}</p>
@@ -99,7 +100,7 @@
                                     <option value="0" data-select2-id="1">انتخاب واحد</option>
                                     <!-- <optgroup label="Alaskan/Hawaiian Time Zone" data-select2-id="13"> -->
                                     @foreach($units as $unit)   
-                                    <option value="{{ $unit->id }}">{{ $unit->unit_name_fa }}</option>
+                                    <option value="{{ $unit->id }}" {{ ($project->unit_id == $unit->id) ? 'selected':'' }} >{{ $unit->unit_name_fa }}</option>
                                     @endforeach
                                     <!-- </optgroup>  -->
                                 </select> 
@@ -114,14 +115,14 @@
                                     <option value="0" data-select2-id="3">انتخاب تطبیق کننده</option>
                                     <!-- <optgroup label="Alaskan/Hawaiian Time Zone" data-select2-id="13"> -->
                                     @foreach($depratments as $department)   
-                                    <option value="{{ $department->id }}">{{ $department->name_da }}</option>
+                                    <option value="{{ $department->id }}" {{ ($project->impliment_department_id == $department->id) ? 'selected':'' }} >{{ $department->name_da }}</option>
                                     @endforeach
                                     <!-- </optgroup>  -->
                                 </select> 
                             </div>
                         </div>
                     </div>
-                
+                    
                     <div class="col-md-6 col-sm-6">
                         <div class="form-group has-danger row">
                             <label class="control-label text-end col-md-2">مدیریت کننده*</label>
@@ -130,7 +131,7 @@
                                     <option data-select2-id="4">انتخاب مدیریت کننده</option>
                                     <!-- <optgroup label="Alaskan/Hawaiian Time Zone" data-select2-id="13"> -->
                                     @foreach($depratments as $depratment)   
-                                    <option value="{{ $depratment->id }}">{{ $depratment->name_da }}</option>
+                                    <option value="{{ $depratment->id }}" {{ ($project->management_department_id == $depratment->id) ? 'selected':'' }}>{{ $depratment->name_da }}</option>
                                     @endforeach
                                     <!-- </optgroup>  -->
                                 </select> 
@@ -145,7 +146,7 @@
                                     <option data-select2-id="5">انتخاب دیزاین کننده</option>
                                     <!-- <optgroup label="Alaskan/Hawaiian Time Zone" data-select2-id="13"> -->
                                     @foreach($depratments as $depratment)   
-                                    <option value="{{ $depratment->id }}">{{ $depratment->name_da }}</option>
+                                    <option value="{{ $depratment->id }}" {{ ($project->design_department_id == $depratment->id) ? 'selected':'' }} >{{ $depratment->name_da }}</option>
                                     @endforeach
                                     <!-- </optgroup>  -->
                                 </select> 
@@ -159,7 +160,7 @@
                                 <select name="district_id[]" class="select2 m-b-10 select2-multiple" style="width: 100%" multiple="multiple" data-placeholder="Choose">
                                         <!-- <optgroup label="Alaskan/Hawaiian Time Zone" data-select2-id="13"> -->
                                     @foreach($districts as $district)   
-                                        <option value="{{ $district->id }}">{{ $district->name }}</option>
+                                        <option value="{{ $district->id }}" @foreach($project->districts as $project_district_id) {{ ($project_district_id->id == $district->id) ? 'selected':'' }} @endforeach >{{ $district->name }}</option>
                                     @endforeach
                                         <!-- </optgroup>  -->
                                 </select>
@@ -170,8 +171,7 @@
                     <div class="form-actions">
                         <div class="card-body">
                             <button type="submit" class="btn btn-success text-white"> <i class="fa fa-check"></i>
-                                ذخیره</button>
-                            <button type="reset" class="btn btn-dark">لفوه</button>
+                                ویرایش</button>
                         </div>
                     </div>
                 </div>
@@ -182,8 +182,8 @@
 {{-- end add user --}}
 @endsection
 @section('script')
-    <script src="../assets/node_modules/select2/dist/js/select2.full.min.js" type="text/javascript"></script>
-    <script src="../assets/node_modules/select2/dist/js/select2.full.min.js" type="text/javascript"></script>  
+    <script src="{{ asset('assets/node_modules/select2/dist/js/select2.full.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/node_modules/select2/dist/js/select2.full.min.js') }}" type="text/javascript"></script>  
   <script>
         $(function () {
           
