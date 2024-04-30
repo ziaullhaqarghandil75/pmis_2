@@ -33,4 +33,5 @@ class Project extends Model
     {
         return $this->belongsToMany(District::class,'project_districts');
     }
+
 }

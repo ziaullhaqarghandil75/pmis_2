@@ -20,6 +20,7 @@ class RoleController extends Controller
      */
     public function index()
     {
+      
         $roles = Role::get();
 
         return view('account_settings.role', compact('roles'));
@@ -38,6 +39,9 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
+        if(!(auth::user()->can('add_role') and auth::user()->can('roles'))){
+            return view('layouts.403');
+        }
         $request->validate([
             'name' => ['required'],
             'description' => ['required'],
@@ -66,6 +70,9 @@ class RoleController extends Controller
      */
     public function edit(string $id)
     {
+        if(!(auth::user()->can('edit_role') and auth::user()->can('roles'))){
+            return view('layouts.403');
+        }
         $roles = Role::find($id);
         $permissions = Permission::get();
         $permission_categories = PermissionCategory::get();
@@ -79,6 +86,9 @@ class RoleController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        if(!(auth::user()->can('edit_role') and auth::user()->can('roles'))){
+            return view('layouts.403');
+        }
         $role_status = Role::find($id);
         $role = Role::find($id);
       
@@ -92,6 +102,10 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
+        if(!(auth::user()->can('delete_role') and auth::user()->can('roles'))){
+            return view('layouts.403');
+        }
+
         $delete = Role::find($id);
         $delete->delete();
 
@@ -99,6 +113,9 @@ class RoleController extends Controller
     }
 
     public function status_role($id){
+        if(!(auth::user()->can('edit_role') and auth::user()->can('roles'))){
+            return view('layouts.403');
+        }
         $role_status = Role::find($id);
         if ($role_status->status == 0) {
             $role_status->update([

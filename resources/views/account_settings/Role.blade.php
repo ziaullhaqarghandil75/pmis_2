@@ -11,6 +11,7 @@
     </div>
 </div>
 {{-- add permission --}}
+@can('add_role')
 <div class="row">
     <div class="col-lg-12">
         <div class="card">
@@ -76,7 +77,7 @@
     </div>
 </div>
 {{-- end add permission --}}
-
+@endcan
 {{-- list permission --}}
 <div class="col-lg-12">
     <div class="card">

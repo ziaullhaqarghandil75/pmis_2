@@ -6,7 +6,7 @@
             <ul id="sidebarnav">
                 <li> <a class=" waves-effect waves-dark" href="\" aria-expanded="false"><i class="icon-home"></i><span class="hide-menu">دشبورد</span></a></li>
                 @can('setting_users')
-                    <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="icon-people"></i><span class="hide-menu">تنظیمات حساب کابری</span></a>
+                    <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="icon-people"></i><span class="hide-menu">تنظیمات حساب کاربران</span></a>
                         <ul aria-expanded="false" class="collapse">
                         @can('roles')
                             <li><a href="{{ route('role.index') }}">سطح دسترسی</a></li>
@@ -43,6 +43,9 @@
                         <ul aria-expanded="false" class="collapse">
                             @can('projects')
                             <li><a href="{{ route('project.index') }}">پروژه ها</a></li>
+                            @endcan
+                            @can('project_tracking')
+                            <li><a href="{{ route('project_tracking.index') }}">تعقیب پروژه ها</a></li>
                             @endcan
                         </ul>
                     <li>

@@ -58,9 +58,9 @@
                         </td>
                         <td>
                             @if ($user->status == 0)
-                            <button type="button" class="btn waves-effect waves-light btn-danger text-white">غیر فایل <i class=" fas fa-times"></i> </button>
+                            <button type="button" class="btn waves-effect waves-light btn-danger text-white">غیر فعال <i class=" fas fa-times"></i> </button>
                             @else
-                            <button type="submit" class="btn waves-effect waves-light btn-success text-white"> فایل <i class="fas fa-check"></i> </button>
+                            <button type="submit" class="btn waves-effect waves-light btn-success text-white"> فعال <i class="fas fa-check"></i> </button>
                             @endif
                         </td>
                         <td>

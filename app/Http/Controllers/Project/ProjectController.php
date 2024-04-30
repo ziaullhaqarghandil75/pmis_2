@@ -9,6 +9,7 @@ use App\Models\Plan\Goal;
 use App\Models\Plan\GoalCategory;
 use App\Models\Plan\Unit;
 use App\Models\Project\Project;
+use App\Models\Project\ProjectTracking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,8 +23,18 @@ class ProjectController extends Controller
         if(!(auth::user()->can('view_project') and Auth::user()->can('projects'))){
             return view('layouts.403');
         }
-        $projects = Project::with('goals','units','impliment_departments','management_departments','design_departments')->get();
-        return view('project.project', compact('projects'));
+       
+        if((auth::user()->can('show_all_projects'))){
+            $project_trackings = false;
+            
+            $projects = Project::with('goals','units','impliment_departments','management_departments','design_departments')->get();
+        }else{
+
+            $project_trackings = ProjectTracking::with('project_projcts','project_departments')->where('department_id','=',auth::user()->department_id)->get();
+           
+            $projects = Project::with('goals','units','impliment_departments','management_departments','design_departments')->get();
+        }   
+        return view('project.project', compact('projects','project_trackings'));
     }
 
     /**

@@ -11,7 +11,10 @@ use App\Http\Controllers\Plan\GoalController;
 use App\Http\Controllers\Plan\UnitController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Project\ProjectController;
+use App\Http\Controllers\Project\ProjectTrackingController;
+use App\Http\Controllers\Project\ReportProjectTrackingController;
 use App\Models\Project\Project;
+use App\Models\Project\ReportProjectTracking;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules\Can;
 
@@ -59,6 +62,9 @@ Route::middleware('auth')->group(function () {
 
     //  start project settings
     Route::resource('/project', ProjectController::class);
+    Route::resource('/project_tracking', ProjectTrackingController::class);
+    Route::post('/report_project_tracking', [ReportProjectTrackingController::class, 'store'])->name('report_project_tracking.store');
+    Route::get('/report_project_tracking/{id}/department_id/{department_id}/project_tracking_id/{project_tracking_id}', [ReportProjectTrackingController::class, 'show'])->name('report_project_tracking.show');
 
     //  start project settings
 
