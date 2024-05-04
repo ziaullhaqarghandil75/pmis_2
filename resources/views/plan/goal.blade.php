@@ -36,21 +36,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-5">
-                            <div class="form-group has-danger row">
-                                <label class="control-label col-md-3">دسته بندی</label>
-                                <div class="col-md-8">
-                                    <select name="gole_category_id" class="form-control form-select">
-                                        <option value="0">--انتخاب دسته بندی--</option>
-                                        @foreach ($goal_categories as $goal_category )
-                                        <option value="{{ $goal_category->id }}">
-                                            {{ $goal_category->name }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                      
                         <div class="col-md-2">
                             <button type="submit" class="btn btn-success text-white"> <i class="fa fa-check"></i>
                                     ذخیره</button>
@@ -78,21 +64,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-5">
-                            <div class="form-group has-danger row">
-                                <label class="control-label col-md-3">دسته بندی</label>
-                                <div class="col-md-8">
-                                    <select name="gole_category_id" class="form-control form-select">
-                                        <option value="0">--انتخاب دسته بندی--</option>
-                                        @foreach ($goal_categories as $goal_category )
-                                        <option  value="{{ $goal_category->id }}" @if($edit_goal->gole_category_id == $goal_category->id) selected  @endif>
-                                            {{ $goal_category->name }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                      
                         <div class="col-md-2">
                             <button type="submit" class="btn btn-success text-white"> <i class="fa fa-check"></i>
                                     ذخیره</button>
@@ -110,23 +82,15 @@
                             <tr>
                                 <th>#</th>
                                 <th>هدف</th>
-                                <th>دسته بندی</th>
                                 <th>ویرایش</th>
                                 <th>حذف</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php $key = 1 ?>
-                            @foreach($goals as $goal)
+                            @foreach($goals as $key => $goal)
                             <tr>
-                                <td>{{ $key++ }}</td>
+                                <td>{{ $key+1 }}</td>
                                 <td>{{$goal->goal_name}}</td>
-                                <td>
-                                    @foreach($goal->goal_categories as $goal_category)
-                                        {{ $goal_category->name }}
-                                    @endforeach
-                                </td>
-                            
                                 <td>
                                     <a href="{{ route('goal.edit',$goal->id) }}" type="submit" class="btn btn-success text-white">ویرایش <i class="fas fa-eye-dropper"></i> </a>
                                 </td>

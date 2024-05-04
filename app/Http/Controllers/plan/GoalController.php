@@ -14,8 +14,9 @@ class GoalController extends Controller
      */
     public function index()
     {
-        $goal_categories = GoalCategory::get();
-        $goals = Goal::with('goal_categories')->get();
+        $goal_categories = GoalCategory::with('goals')->get();
+        
+        $goals = Goal::get();
         $edit_goal_category = false;
         $edit_goal = false;
 
@@ -35,20 +36,13 @@ class GoalController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
         $request->validate([
             'goal_name' => 'required|unique:'.Goal::class,
-            'gole_category_id' => 'required',
         ]);
-        // dd($request->all());
-        if($request->gole_category_id == 0){
-            return redirect()->route('goal.index')->with('error', 'لطفا دسته بندی هدف را انتخاب نماید.');
-
-        }
+   
         // here we will insert product in db
         $goal_category = new Goal();
         $goal_category->goal_name = $request->goal_name;
-        $goal_category->gole_category_id = $request->gole_category_id;
         $goal_category->save();
 
         return redirect()->route('goal.index')->with('success', 'هدف شما اضافه شد.');
@@ -72,7 +66,6 @@ class GoalController extends Controller
         $edit_goal = Goal::find($id);
         $goal_categories = GoalCategory::get();
         $goals = Goal::with('goal_categories')->get();
-        // dd($goals);
         
         return view('plan.goal', compact('goal_categories','goals','edit_goal','edit_goal_category'));
     }
@@ -85,14 +78,9 @@ class GoalController extends Controller
         $request->validate([
             'goal_name' => 'required',
         ]);
-        if($request->gole_category_id == 0){
-            return redirect()->route('goal.index')->with('error', 'لطفا دسته بندی هدف را انتخاب نماید.');
-
-        }
         $update = Goal::find($id);
         $update->update([
             'goal_name' => $request->goal_name,
-            'gole_category_id' => $request->gole_category_id,
         ]);
         return redirect()->route('goal.index')->with('success', ' معلومات هدف شما ویرایش شد.');
     }
@@ -102,7 +90,7 @@ class GoalController extends Controller
      */
     public function destroy(string $id)
     {
-        $delete = Goal::find($id);
+        $delete = Goal::find($id); 
         $delete->delete();
         return redirect()->route('goal.index')->with('warning', 'هدف حذف گردید.');
     }

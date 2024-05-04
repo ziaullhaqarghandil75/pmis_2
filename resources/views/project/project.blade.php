@@ -56,9 +56,9 @@
                                         <td>@foreach($project->management_departments as $management_department){{ $management_department->name_da }} @endforeach</td>
                                         <td>@foreach($project->design_departments as $design_department){{ $design_department->name_da }} @endforeach</td>
                                         <?php
-                                            $project_modes = App\Models\Project\ProjectTracking::with('project_departments','percentage_project_view')->where('project_id','=',$project_tracking->project_id)->orderByDesc('department_id')->first();
+                                            $project_modes = App\Models\Project\ProjectTracking::with('project_departments','percentage_project_view')->where('project_id','=',$project_tracking->project_id)->orderByDesc('id')->first();
                                         ?>
-                                            
+                                           
                                         <td>
                                             @foreach($project_modes->project_departments as $project_department)
                                             <?php
@@ -67,7 +67,6 @@
                                                                                                             ->where('department_id','=',$project_modes->department_id)
                                                                                                             ->where('project_tracking_id','=',$project_modes->id)->sum('percentage');
                                             ?>
-                                        
                                                 {{ $project_department->name_da }}
                                                 <div class="progress m-t-20">
                                                 <div class="progress-bar bg-success" style="width: <?php echo $project_modes_p?>%; height:15px;" role="progressbar">{{ $project_modes_p }}%</div>
@@ -80,22 +79,23 @@
                                                 </button>
 
                                                 <div class="dropdown-menu animated flipInY">
-                                                <a  class="dropdown-item bg-info" href="{{ route('project.edit',$project->id) }}" type="submit" class="btn btn-info text-white">توضیحات <i class="icons-Info-Window"></i> </a>
+                                                <a  class="dropdown-item bg-info" href="{{ route('project.show',$project->id) }}" type="submit" class="btn btn-info text-white">توضیحات <i class="icons-Info-Window"></i> </a>
                                             
+                                                @can('edit_project')
                                                 <div class="dropdown-divider"></div>
                                                 <a class="dropdown-item bg-info " href="{{ route('project.edit',$project->id) }}" type="submit" class="btn btn-success text-white">ویرایش <i class="fas fa-eye-dropper"></i> </a>
-                                            
+                                                @endcan
+
+                                                @can('delete_project')
                                                 <div class="dropdown-divider"></div>
                                                 <form action="{{ route('project.destroy',$project->id) }}" method="POST">
                                                     @method('delete')
                                                     @csrf
                                                         <button type="submit" class="dropdown-item btn bg-danger ">حذف <i class="fas fa-trash-alt"></i> </button>
                                                 </form>    
-
+                                                @endcan
                                             <div class="dropdown-divider"></div>
                                                 <a class="dropdown-item bg-info " href="{{ route('project_tracking.show',$project->id) }}" type="submit" class="btn btn-success text-white">تعقیب پروژه <i class="icons-Management"></i> </a>
-                                            
-                                                
                                             </div>
                                         </td>
                                     </tr>
@@ -112,23 +112,30 @@
                                         <td>@foreach($project->management_departments as $management_department){{ $management_department->name_da }} @endforeach</td>
                                         <td>@foreach($project->design_departments as $design_department){{ $design_department->name_da }} @endforeach</td>
                                         <?php
-                                            $project_modes = App\Models\Project\ProjectTracking::with('project_departments','percentage_project_view')->where('project_id','=',$project->id)->orderByDesc('department_id')->first();
+                                            $project_modes = App\Models\Project\ProjectTracking::with('project_departments','percentage_project_view')->where('project_id','=',$project->id)->orderByDesc('id')->first();
                                         ?>
-                                            
                                         <td>
-                                            @foreach($project_modes->project_departments as $project_department)
-                                            <?php
-                                                $project_modes_p = 0;
-                                                $project_modes_p = App\Models\Project\ReportProjectTracking::where('project_id','=',$project_modes->project_id)
-                                                                                                            ->where('department_id','=',$project_modes->department_id)
-                                                                                                            ->where('project_tracking_id','=',$project_modes->id)->sum('percentage');
-                                            ?>
-                                        
-                                                {{ $project_department->name_da }}
-                                                <div class="progress m-t-20">
-                                                <div class="progress-bar bg-success" style="width: <?php echo $project_modes_p?>%; height:15px;" role="progressbar">{{ $project_modes_p }}%</div>
-                                                </div>
-                                            @endforeach</td>
+                                            @if(!$project_modes == null)
+                                                @foreach($project_modes->project_departments as $project_department)
+                                                <?php
+                                                    $project_modes_p = 0;
+                                                    $project_modes_p = App\Models\Project\ReportProjectTracking::where('project_id','=',$project_modes->project_id)
+                                                                                                                ->where('department_id','=',$project_modes->department_id)
+                                                                                                                ->where('project_tracking_id','=',$project_modes->id)->sum('percentage');
+                                                ?>
+                                                    {{ $project_department->name_da }}
+                                                    <div class="progress m-t-20">
+                                                        @if($project_modes_p == '0')
+                                                            <div class="progress-bar bg-danger" style="width: 100%; height:15px;" role="progressbar">0%</div>
+                                                        @else
+                                                            <div class="progress-bar bg-success" style="width: <?php echo $project_modes_p?>%; height:15px;" role="progressbar">{{ $project_modes_p }}%</div>
+                                                        @endif
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                            پروژ انتقال نه شده است.    
+                                            @endif
+                                        </td>
                                         <td>
                                             <div class="btn-group">
                                                 <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -136,22 +143,23 @@
                                                 </button>
 
                                                 <div class="dropdown-menu animated flipInY">
-                                                <a  class="dropdown-item bg-info" href="{{ route('project.edit',$project->id) }}" type="submit" class="btn btn-info text-white">توضیحات <i class="icons-Info-Window"></i> </a>
-                                            
+                                                <a  class="dropdown-item bg-info" href="{{ route('project.show',$project->id) }}" type="submit" class="btn btn-info text-white">توضیحات <i class="icons-Info-Window"></i> </a>
+                                                @can('edit_project')
                                                 <div class="dropdown-divider"></div>
                                                 <a class="dropdown-item bg-info " href="{{ route('project.edit',$project->id) }}" type="submit" class="btn btn-success text-white">ویرایش <i class="fas fa-eye-dropper"></i> </a>
-                                            
+                                                @endcan
+
+                                                @can('delete_project')
                                                 <div class="dropdown-divider"></div>
                                                 <form action="{{ route('project.destroy',$project->id) }}" method="POST">
                                                     @method('delete')
                                                     @csrf
                                                         <button type="submit" class="dropdown-item btn bg-danger ">حذف <i class="fas fa-trash-alt"></i> </button>
-                                                </form>    
+                                                </form> 
+                                                @endcan
 
                                             <div class="dropdown-divider"></div>
                                                 <a class="dropdown-item bg-info " href="{{ route('project_tracking.show',$project->id) }}" type="submit" class="btn btn-success text-white">تعقیب پروژه <i class="icons-Management"></i> </a>
-                                            
-                                                
                                             </div>
                                         </td>
                             </tr>

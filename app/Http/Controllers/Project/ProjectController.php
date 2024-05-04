@@ -27,12 +27,12 @@ class ProjectController extends Controller
         if((auth::user()->can('show_all_projects'))){
             $project_trackings = false;
             
-            $projects = Project::with('goals','units','impliment_departments','management_departments','design_departments')->get();
+            $projects = Project::with('goals','units','impliment_departments','management_departments','design_departments')->orderByDesc('id')->get();
         }else{
 
-            $project_trackings = ProjectTracking::with('project_projcts','project_departments')->where('department_id','=',auth::user()->department_id)->get();
+            $project_trackings = ProjectTracking::with('project_projcts','project_departments')->where('department_id','=',auth::user()->department_id)->orderByDesc('id')->get();
            
-            $projects = Project::with('goals','units','impliment_departments','management_departments','design_departments')->get();
+            $projects = Project::with('goals','units','impliment_departments','management_departments','design_departments')->orderByDesc('id')->get();
         }   
         return view('project.project', compact('projects','project_trackings'));
     }
@@ -89,7 +89,9 @@ class ProjectController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $project = Project::with('goals','units','impliment_departments','management_departments','design_departments')->find($id);
+        return view('project.details_project',compact('project'));
+
     }
 
     /**

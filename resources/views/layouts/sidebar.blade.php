@@ -44,9 +44,9 @@
                             @can('projects')
                             <li><a href="{{ route('project.index') }}">پروژه ها</a></li>
                             @endcan
-                            @can('project_tracking')
+                            <!-- @can('project_tracking')
                             <li><a href="{{ route('project_tracking.index') }}">تعقیب پروژه ها</a></li>
-                            @endcan
+                            @endcan -->
                         </ul>
                     <li>
                 @endcan

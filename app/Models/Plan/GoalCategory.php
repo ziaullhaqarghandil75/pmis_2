@@ -10,5 +10,9 @@ class GoalCategory extends Model
     use HasFactory;
     protected $fillable = [
         'name',
+        'goal_id',
     ];
+    public function goals(){
+        return $this->hasMany(Goal::class,'id','goal_id');
+    }
 }

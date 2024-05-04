@@ -31,12 +31,18 @@ class GoalCategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-        ]);
+            'name' => 'required|string|unique:'.GoalCategory::class,
+            'goal_id' => 'required',
+        ]); 
 
+        if($request->goal_id == 0){
+            return redirect()->back()->with('error', 'لطف هدف را انتخاب نماید.');
+
+        }
         // here we will insert product in db
         $goal_category = new GoalCategory();
         $goal_category->name = $request->name;
+        $goal_category->goal_id = $request->goal_id;
         $goal_category->save();
 
         return redirect()->route('goal.index')->with('success', 'دسته بندی هدف شما اضافه شد.');
@@ -59,9 +65,10 @@ class GoalCategoryController extends Controller
         $edit_goal_category = GoalCategory::find($id);
 
         $goal_categories = GoalCategory::get();
+
         $edit_goal = false;
         
-        $goals = Goal::with('goal_categories')->get();
+        $goals = Goal::get();
         return view('plan.goal', compact('edit_goal_category','goal_categories','goals','edit_goal'));
     }
 
@@ -72,10 +79,16 @@ class GoalCategoryController extends Controller
     {
         $request->validate([
             'name' => 'required',
+            'goal_id' => 'required',
         ]);
+        if($request->goal_id == 0){
+            return redirect()->back()->with('error', 'لطف هدف را انتخاب نماید.');
+
+        }
         $update = GoalCategory::find($id);
         $update->update([
             'name' => $request->name,
+            'goal_id' => $request->goal_id,
         ]);
         return redirect()->route('goal.index')->with('success', ' معلومات دسته بندی شما ویرایش شد.');
     }
