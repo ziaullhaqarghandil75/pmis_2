@@ -45,6 +45,8 @@ Route::middleware('auth')->group(function () {
     });
     //  start account settings
     Route::resource('/user', UserController::class);
+    Route::patch('/change_password/{id}', [UserController::class, 'change_password'])->name('user.change_password');
+
     Route::resource('/permission', PermissionController::class);
     Route::resource('/permission_category', PermissionCategoryController::class);
     Route::resource('/role', RoleController::class);

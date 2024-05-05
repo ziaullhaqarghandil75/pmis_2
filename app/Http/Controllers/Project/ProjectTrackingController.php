@@ -19,7 +19,7 @@ class ProjectTrackingController extends Controller
      */
     public function index()
     {
-      
+
     }
 
     /**
@@ -61,7 +61,7 @@ class ProjectTrackingController extends Controller
      */
     public function edit(string $id)
     {
-        
+
     }
 
     /**
@@ -69,60 +69,64 @@ class ProjectTrackingController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        
+
         if(!(auth::user()->can('add_project_tracking'))){
             return view('layouts.403');
         }
-      
-         
+
+
         if($request->department_id == '0'){
             return redirect()->route('project_tracking.show',$id)->with('warning', 'لطفا دیپارتمنت را انتخاب نماید.');
         }
 
         $date = Carbon::now();
-      
+
         $project_name = Project::select('name')->find($id);
         $ProjectTracking = new ProjectTracking();
 
         // start check for percentage
         $current_department_id = $ProjectTracking->where('project_id','=',$id)->orderByDesc('id')->first();
+        // dd($current_department_id);
         if(!$current_department_id  == null){
+
             $recprot_current_department_percentage = ReportProjectTracking::where('project_id','=',$id)
                                                                             ->where('department_id','=',$current_department_id->department_id)
-                                                                            ->sum('percentage');  
-       
+                                                                            ->sum('percentage');
+
             if($recprot_current_department_percentage < 100){
                 return redirect()->back()->with('warning', 'فیصدی کار انجام کم است .');
             }
         }
         // end check for percentage
 
-        $request->validate([
-            'file' => ['required','mimes:pdf,PDF'],
-            'description' => ['required'],
-        ]);
+            $request->validate([
+                'file' => ['required','mimes:pdf,PDF'],
+                'description' => ['required'],
+            ]);
 
-        //  check select dpartment
-        if($request->department_id == '0'){
-            return redirect()->route('project_tracking.show',$id)->with('warning', 'لطفا دیپارتمنت را انتخاب نماید.');
-        }
-        
+            //  check select dpartment
+            if($request->department_id == '0'){
+                return redirect()->route('project_tracking.show',$id)->with('warning', 'لطفا دیپارتمنت را انتخاب نماید.');
+            }
 
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $extension = $file->getClientOriginalExtension();
-            $fileName = $date->format('Y-m-d').'-'.time().'.'.$extension; 
-            $path = 'project_file/'.$project_name->name.'/';
-            $file->move($path, $fileName); 
-        }
-    
-        // here we will insert product in db
-        
-        $ProjectTracking->project_id = $id;
-        $ProjectTracking->department_id = $request->department_id;
-        $ProjectTracking->description = $request->description;
-        $ProjectTracking->file = $path.$fileName;
-        $ProjectTracking->save();
+
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
+                $extension = $file->getClientOriginalExtension();
+                $fileName = $date->format('Y-m-d').'-'.time().'.'.$extension;
+                $path = 'project_file/'.$project_name->name.'/';
+                $file->move($path, $fileName);
+            }
+
+            // here we will insert product in db
+
+            $ProjectTracking->project_id = $id;
+            $ProjectTracking->department_id = $request->department_id;
+            $ProjectTracking->description = $request->description;
+            $ProjectTracking->file = $path.$fileName;
+            $ProjectTracking->date_of_send = $request->date_of_send;
+            $ProjectTracking->save();
+
 
         return redirect()->route('project_tracking.show',$id)->with('success', 'پروژه شما ارسال گردید.');
     }

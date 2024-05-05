@@ -186,19 +186,14 @@
                                             <td>{{ $key+1 }}</td>
                                             <td>{{ $report->description }}</td>
                                             <td>{{ $report->percentage }}</td>
-                                            <td>{{ $report->created_at->format('Y/m/d') }}</td>
+                                            <td>{{ jdate($report->create_at)->format('%A - d / m / Y')  }}</td>
                                         </tr>
                                         
                                     @endforeach
-                                   
-                                    
                                 </tbody>
                             </table>
                             <table>
-                               
-
-                                        <td  class="label-info" >مجموع فصیدی تکیمیل شده : {{ $percentage }}</td>
-                                  
+                                <td  class="label-info" >مجموع فصیدی تکیمیل شده : {{ $percentage }}</td>
                             </table>
                         </div>
                     </div>

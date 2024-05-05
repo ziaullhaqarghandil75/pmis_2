@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProjectTracking extends Model
 {
     use HasFactory;
+    protected $guarded = [];
     public function project_departments()
     {
         return $this->hasMany(Depratment::class,"id","department_id");

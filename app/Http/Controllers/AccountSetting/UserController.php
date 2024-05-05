@@ -18,7 +18,7 @@ class UserController extends Controller
      */
     public function index()
     { 
-        // auth::user()->hasRole('admin');
+        // dd(auth::user()->id);
         // dd(auth::user()->hasRole('admin'));
         if(!(auth::user()->can('view_user') and auth::user()->can('users'))){
             return view('layouts.403');
@@ -40,7 +40,7 @@ class UserController extends Controller
             return view('layouts.403');
         }
         $departments = Depratment::where('status','=','1')->get();
-        $roles = Role::get();
+        $roles = Role::where('status','=','1')->get();
         return view('account_settings.add_user',compact('departments','roles'));
 
     }
@@ -55,7 +55,9 @@ class UserController extends Controller
         }
         $request->validate([
             'name' => ['required','string'],
-            'password' => ['required','string'],
+            'phone' => ['required','min:10','numeric','unique:'.User::class],
+            'img' => ['required','mimes:jpg,png,JPG,PNG'],
+            'password' => ['required','string','min:8','max:100'],            
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'department_id' => ['required'],
             'role_id' => ['required'],
@@ -66,9 +68,8 @@ class UserController extends Controller
             $filename = time().'.'.$extension;
             $path = 'img/users/';
             $file->move($path,$filename);
-            // if(File::exists($user->img)){
-            // }
         }
+
 
         // here we will insert product in db
         $user = new User();
@@ -108,9 +109,11 @@ class UserController extends Controller
         if(!(auth::user()->can('edit_user') and auth::user()->can('users'))){
             return view('layouts.403');
         }
+
         $departments = Depratment::where('status','=','1')->get();
         $roles = Role::get();
         $user = User::with('roles','departments')->find($id);
+
         return view('account_settings.profile_user',compact('departments','roles','user'));
     }
 
@@ -122,7 +125,14 @@ class UserController extends Controller
         if(!(auth::user()->can('edit_user') and auth::user()->can('users'))){
             return view('layouts.403');
         }
-        
+        $request->validate([
+            'name' => ['required','string'],
+            'phone' => ['required','min:10','numeric','unique:'.User::class.',phone,'.$id],
+            'img' => ['mimes:jpg,png,JPG,PNG'],
+            'password' => ['string'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class.',email,'.$id],
+        ]);
+
         $update = User::find($id);
 
         if($request->has('img')){
@@ -131,17 +141,15 @@ class UserController extends Controller
             $filename = time().'.'.$extension;
             $path = 'img/users/';
             $file->move($path,$filename);
+            
+            if($update->img){
+                File::delete($update->img);
+            }
 
             $update->update([
             'img' => $path.$filename,
             ]);
 
-            // dd($update->img);
-            if($update->img){
-                // dd('img');
-                dd(File::delete($update->img));
-                File::delete($update->img);
-            }
         }
 
         $update->update([
@@ -149,16 +157,12 @@ class UserController extends Controller
             'last_name' => $request->last_name,
             'phone' => $request->phone,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
-            // 'img' => $path.$filename,
-            'department_id' => $request->department_id,
-            'status' => $request->status,
         ]);
 
-        $update->roles()->sync($request->input('role_id'));
+        // $update->roles()->sync($request->input('role_id'));
 
      
-        return redirect()->route('user.index')->with('success', ' معلومات شما ویرایش شد.');
+        return redirect()->back()->with('success', ' معلومات شما ویرایش شد.');
     }
 
     /**
@@ -177,5 +181,26 @@ class UserController extends Controller
         $delete->delete();
         return redirect()->route('user.index')->with('warning', 'کاربر شما حذف گردید.');
         
+    }
+    public function change_password(Request $request, string $id)
+    {
+       
+        if(!(auth::user()->can('change_password_user'))){
+            return view('layouts.403');
+        }
+
+        $request->validate([
+            'old_password' => ['required','min:8','max:100'],
+            'new_password' => ['required','min:8','max:100'],
+            'confirm_password' => ['required','same:new_password'],
+        ]);
+
+        $update = User::find($id);
+
+        $update->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+     
+        return redirect()->back()->with('success', ' پسورد شما تغیر کرد.');
     }
 }

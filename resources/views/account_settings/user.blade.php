@@ -36,8 +36,12 @@
                         <th>دیپارتمنت</th>
                         <th>تصویر</th>
                         <th>حالت</th>
+                        @can('edit_user')
                         <th>ویرایش</th>
+                        @endcan
+                        @can('delete_user')
                         <th>حذف</th>
+                        @endcan
                     </tr>
                 </thead>
                 <tbody>
@@ -63,9 +67,12 @@
                             <button type="submit" class="btn waves-effect waves-light btn-success text-white"> فعال <i class="fas fa-check"></i> </button>
                             @endif
                         </td>
+                        @can('edit_user')
                         <td>
                             <a href="{{ route('user.edit',$user->id) }}" type="submit" class="btn btn-success text-white">ویرایش <i class="fas fa-eye-dropper"></i> </a>
                         </td>
+                        @endcan
+                        @can('delete_user')
                         <td>
                             <form action="{{ route('user.destroy',$user->id) }}" method="POST">
                                 @method('delete')
@@ -73,6 +80,7 @@
                                 <button type="submit" class="btn waves-effect waves-light btn-danger text-white">حذف <i class="fas fa-trash-alt"></i> </button>
                             </form>
                         </td>
+                        @endcan
                     </tr>
                     @endforeach
                 </tbody>
