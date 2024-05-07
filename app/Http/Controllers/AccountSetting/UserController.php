@@ -17,14 +17,14 @@ class UserController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    { 
+    {
         // dd(auth::user()->id);
         // dd(auth::user()->hasRole('admin'));
         if(!(auth::user()->can('view_user') and auth::user()->can('users'))){
             return view('layouts.403');
         }
         $users = User::with('roles')->get();
-        
+
         $departments = Depratment::get();
         $roles = Role::get();
         return view('account_settings.user', compact('users'));
@@ -35,7 +35,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        
+
         if(!(auth::user()->can('add_user') and auth::user()->can('users'))){
             return view('layouts.403');
         }
@@ -51,13 +51,13 @@ class UserController extends Controller
     public function store(Request $request)
     {
         if(!(auth::user()->can('add_user') and auth::user()->can('users'))){
-            return view('layouts.403'); 
+            return view('layouts.403');
         }
         $request->validate([
             'name' => ['required','string'],
             'phone' => ['required','min:10','numeric','unique:'.User::class],
             'img' => ['required','mimes:jpg,png,JPG,PNG'],
-            'password' => ['required','string','min:8','max:100'],            
+            'password' => ['required','string','min:8','max:100'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'department_id' => ['required'],
             'role_id' => ['required'],
@@ -82,7 +82,7 @@ class UserController extends Controller
         $user->department_id = $request->department_id;
         $user->status = $request->status;
         $user->save();
-        
+
         $user->roles()->sync($request->input('role_id'));
 
 
@@ -141,7 +141,7 @@ class UserController extends Controller
             $filename = time().'.'.$extension;
             $path = 'img/users/';
             $file->move($path,$filename);
-            
+
             if($update->img){
                 File::delete($update->img);
             }
@@ -161,7 +161,7 @@ class UserController extends Controller
 
         // $update->roles()->sync($request->input('role_id'));
 
-     
+
         return redirect()->back()->with('success', ' معلومات شما ویرایش شد.');
     }
 
@@ -180,11 +180,11 @@ class UserController extends Controller
 
         $delete->delete();
         return redirect()->route('user.index')->with('warning', 'کاربر شما حذف گردید.');
-        
+
     }
     public function change_password(Request $request, string $id)
     {
-       
+
         if(!(auth::user()->can('change_password_user'))){
             return view('layouts.403');
         }
@@ -200,7 +200,24 @@ class UserController extends Controller
         $update->update([
             'password' => Hash::make($request->new_password),
         ]);
-     
+
         return redirect()->back()->with('success', ' پسورد شما تغیر کرد.');
+    }
+    public function user_status($id){
+        if(!(auth::user()->can('edit_user') and auth::user()->can('users'))){
+            return view('layouts.403');
+        }
+        $user_status = User::find($id);
+        if ($user_status->status == 0) {
+            $user_status->update([
+                'status' => '1'
+            ]);
+            return redirect()->back()->with('success', 'کاربر فعال شد.');
+        } else {
+            $user_status->update([
+                'status' => '0'
+            ]);
+            return redirect()->back()->with('warning', 'کاربر غیر فعال شد.');
+        }
     }
 }

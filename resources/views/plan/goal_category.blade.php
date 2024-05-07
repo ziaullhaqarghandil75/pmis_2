@@ -39,7 +39,7 @@
                         </div>
                     <div class="col-md-2">
                             <button type="submit" class="btn btn-success text-white"> <i class="fa fa-check"></i>
-                                ذخیره</button>   
+                                ذخیره</button>
                     </div>
                 </div>
             </form>
@@ -64,9 +64,9 @@
                                 @enderror
                             </div>
                         </div>
-                        
+
                     </div>
-                    <div class="col-md-5">
+                        <div class="col-md-5">
                             <div class="form-group has-danger row">
                                 <label class="control-label col-md-3">هدف</label>
                                 <div class="col-md-8">
@@ -82,7 +82,7 @@
                             </div>
                         </div>
                     <div class="col-md-2">
-                            <button type="submit" class="btn btn-success text-white">ویرایش</button>   
+                            <button type="submit" class="btn btn-success text-white">ویرایش</button>
                     </div>
                 </div>
             </form>
@@ -106,8 +106,8 @@
                         @foreach($goal_categories as $key => $goal_category)
                         <tr>
                             <td>{{ $key+1 }}</td>
-                            <td>{{$goal_category->name}}</td>                          
-                            <td>@foreach($goal_category->goals as $goal){{$goal->goal_name}} @endforeach</td>                          
+                            <td>{{$goal_category->name}}</td>
+                            <td>@foreach($goal_category->goals as $goal){{$goal->goal_name}} @endforeach</td>
                             <td>
                                 <a href="{{ route('goal_category.edit',$goal_category->id) }}" type="submit" class="btn btn-success text-white">ویرایش <i class="fas fa-eye-dropper"></i> </a>
                             </td>

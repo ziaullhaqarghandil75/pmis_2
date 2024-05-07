@@ -5,7 +5,7 @@
         <div class="d-flex justify-content-end align-items-center">
             <ol class="breadcrumb justify-content-end">
                 <li class="breadcrumb-item"><a href="javascript:void(0)">افزودن سطوح دسترسی</a></li>
-                <li class="breadcrumb-item"><a href="javascript:void(0)">سطوح دسترسی</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('role.index') }}">سطح دسترسی</a></li>
                 <li class="breadcrumb-item active">تنظیمات حساب کاربری</li>
             </ol>
         </div>
@@ -18,7 +18,6 @@
             <form action="{{ route('role.update' , $roles->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                {{-- <input  name="role_id"  type="hidden" value="{{ $roles->id }}"> --}}
                 <div class="card-header bg-info">
                     <h4 class="m-b-0 text-white">افزودن سطوح دسترسی (permission) به {{ $roles->name }}</h4>
                 </div>
@@ -35,31 +34,23 @@
                                 </tr>
                             </thead>
                             <tbody>
-
-                                <?php $key = 1 ?>
-                                @foreach($permission_categories as $permission_category)
+                                @foreach($permission_categories as $key => $permission_category)
                                 <tr>
-                                    <td>{{ $key++ }}</td>
+                                    <td>{{ $key+1 }}</td>
                                     <td>{{$permission_category->category_name}}</td>
                                     <td>
                                         @foreach ($permissions as $permission)
                                         @if ($permission_category->id == $permission->permission_gategory_id)
-
                                         <label class="btn btn-secondary border-0 text-info font-weight-medium active">
                                             <div class="mr-sm-2 form-check">
-                                                {{-- <input type="checkbox" class="material-inputs form-check-input" id="checkbox4" checked=""> --}}
                                                 <input type="checkbox" value="{{ $permission->id }}" name="permission_id[]" class="material-inputs form-check-input" id="checkbox4" @foreach ($role_permissions as $role_permission) @if ($role_permission->permission_id == $permission->id)
                                                 checked=""
                                                 @endif @endforeach>
-                                                {{-- <label class="form-check-label" for="checkbox4"><span class="d-block d-md-none"></span><span class="d-none d-md-block">{{ $permission->description }}</span>
-                                        </label> --}}
-                                        <label class="form-check-label" for="checkbox4">{{ $permission->description }}</label>
-                    </div>
+                                                <label class="form-check-label" for="checkbox4">{{ $permission->description }}</label>
+                                            </div>
                                         </label>
                                         @endif
                                         @endforeach
-                                <td>
-                      
                                 @endforeach
                             </tbody>
                         </table>

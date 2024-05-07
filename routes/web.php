@@ -10,6 +10,7 @@ use App\Http\Controllers\Plan\GoalCategoryController;
 use App\Http\Controllers\Plan\GoalController;
 use App\Http\Controllers\Plan\UnitController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Project\DepartmentActivityController;
 use App\Http\Controllers\Project\ProjectController;
 use App\Http\Controllers\Project\ProjectTrackingController;
 use App\Http\Controllers\Project\ReportProjectTrackingController;
@@ -46,6 +47,7 @@ Route::middleware('auth')->group(function () {
     //  start account settings
     Route::resource('/user', UserController::class);
     Route::patch('/change_password/{id}', [UserController::class, 'change_password'])->name('user.change_password');
+    Route::get('/user_status/{id}', [UserController::class,'user_status'])->name('user_status.user_status');
 
     Route::resource('/permission', PermissionController::class);
     Route::resource('/permission_category', PermissionCategoryController::class);
@@ -67,6 +69,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('/project_tracking', ProjectTrackingController::class);
     Route::post('/report_project_tracking', [ReportProjectTrackingController::class, 'store'])->name('report_project_tracking.store');
     Route::get('/report_project_tracking/{id}/department_id/{department_id}/project_tracking_id/{project_tracking_id}', [ReportProjectTrackingController::class, 'show'])->name('report_project_tracking.show');
+    Route::resource('/department_activity', DepartmentActivityController::class);
+    Route::get('/status_department_activity/{id}/department_id/{department_id}', [DepartmentActivityController::class,'status_department_activity'])->name('department_activity.status_department_activity');
 
     //  start project settings
 

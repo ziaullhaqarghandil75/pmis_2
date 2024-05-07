@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\account_settings\Permission;
 use App\Models\account_settings\PermissionCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class PermissionController extends Controller
@@ -14,7 +15,10 @@ class PermissionController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {   
+    {
+        if(!(Auth::user()->can('view_permission') and Auth::user()->can('permissions'))){
+            return view('layouts.403');
+        }
 
         $permission_categories = PermissionCategory::orderBy('created_at', 'desc')->get();
         $permissions = Permission::get();
@@ -35,6 +39,9 @@ class PermissionController extends Controller
      */
     public function store(Request $request)
     {
+        if(!(Auth::user()->can('add_permission') and Auth::user()->can('permissions'))){
+            return view('layouts.403');
+        }
         $request->validate([
             'name' => ['required'],
             'description' => ['required'],

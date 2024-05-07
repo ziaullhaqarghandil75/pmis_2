@@ -14,9 +14,9 @@
     <div class="col-lg-12 ">
         <div class="card">
             <div class="card-header bg-info">
-            
+
                 <h4 class="m-b-0 text-white">لیست کاربران</h4>
-            
+
             </div>
             <div class="card-body">
             @can("add_user")
@@ -62,9 +62,11 @@
                         </td>
                         <td>
                             @if ($user->status == 0)
-                            <button type="button" class="btn waves-effect waves-light btn-danger text-white">غیر فعال <i class=" fas fa-times"></i> </button>
+
+                            <a href="{{ route('user_status.user_status',$user->id) }}" type="submit" class="btn waves-effect waves-light btn-danger text-white"> غیر  فعال <i class=" fas fa-times"></i> </button>
                             @else
-                            <button type="submit" class="btn waves-effect waves-light btn-success text-white"> فعال <i class="fas fa-check"></i> </button>
+                            <a href="{{ route('user_status.user_status',$user->id) }}" type="submit" class="btn waves-effect waves-light btn-success text-white"> فعال <i class=" fas fa-check"></i> </button>
+
                             @endif
                         </td>
                         @can('edit_user')

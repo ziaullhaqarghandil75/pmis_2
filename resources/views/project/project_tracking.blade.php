@@ -17,7 +17,7 @@
     </div>
 </div>
 
-                        
+
 <!-- start send modal content -->
 <div id="responsive-modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
@@ -30,10 +30,10 @@
                 <form action="{{ route('project_tracking.update', $project->id ) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('put')
-                 
+
                     <div class="form-group">
                         <label class="form-label">انتخاب دیپارتمنت*</label>
-                       
+
 
                         <select name="department_id" class="form-select col-12" id="inlineFormCustomSelect">
                                 <option value="0" selected="">انتخاب دیپارتمنت</option>
@@ -65,7 +65,7 @@
                     </div>
                 </form>
             </div>
-            
+
         </div>
     </div>
 </div>
@@ -216,7 +216,7 @@
                                 <div class="timeline-badge success">
                                     @foreach($project_tracking->project_departments as $project_department) {{ $project_department->name_da }} @endforeach
                                 </div>
-                                <div class="timeline-panel">
+                                <div @if(!$percentage == 100) style="background-color: #FFF7F7;" @endif class="timeline-panel">
                                     <div class="timeline-heading">
                                         <h4 class="timeline-title">@foreach($project_tracking->project_departments as $project_department) {{ $project_department->name_da }} @endforeach</h4>
                                         <p><small class="text-muted"><i class="fa fa-clock-o"></i>تاریخ ارسال به این بخش : {{ jdate($project_tracking->date_of_send)->format('%A - d / m / Y') }}</small></p>
@@ -229,7 +229,7 @@
                                                 <div class="progress-bar bg-success progress-bar-striped" style="width: <?php echo $percentage; ?>% ;height:15px;">{{ $percentage }}</div>
                                             </div>
                                         </p>
-                                        
+
                                     </div>
                                     <div class="timeline-body">
                                         <p>{{ $project_tracking->description}}</p>
@@ -239,25 +239,25 @@
 
                                         <a href="{{ asset($project_tracking->file) }}" class="btn btn-success text-white"><i class="fas fa-download"></i>
                                             دانلود فایل ها</a>
-                                        
+
                                         @if($loop->last)
                                             @if((auth()->user()->can('all_tracking_departments')))
 
                                                 <button type="button" data-bs-target="#responsive-modal" data-bs-toggle="modal"
                                                         class="btn btn-primary text-white"><i class="far fa-share-square"></i> ارسال پروژه</button>
                                             @else
-                                                    
+
                                                 @if($project_tracking->department_id == auth()->user()->department_id)
                                                     <button type="button" data-bs-target="#responsive-modal" data-bs-toggle="modal"
                                                         class="btn btn-primary text-white"><i class="far fa-share-square"></i> ارسال پروژه</button>
                                                 @endif
                                             @endif
                                         @endif
-                                        <a href="{{ route('report_project_tracking.show',[$project->id,$project_tracking->department_id,$project_tracking->id]) }}"  
+                                        <a href="{{ route('report_project_tracking.show',[$project->id,$project_tracking->department_id,$project_tracking->id]) }}"
                                                 class="btn btn-info text-white"><i class="fas fa-info-circle"></i> گزارش</a>
                                     </div>
                                 </div>
-                                
+
                             </li>
                         @endforeach
                     @endif
@@ -273,6 +273,6 @@
 @endsection
 @section('script')
 <script src="{{ asset('assets/node_modules/horizontal-timeline/js/horizontal-timeline.js') }}"></script>
-   
+
 
 @endsection

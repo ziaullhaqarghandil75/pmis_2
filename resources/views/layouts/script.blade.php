@@ -42,13 +42,14 @@
         <script>
                 $.toast({
                     heading: '{{ $error }}  ',
+                    // position: 'top-right',
                     position: 'top-right',
                     loaderBg:'#ff6849',
                     icon: 'error',
                     hideAfter: 3500
-                    
+
                 });
-        </script>     
+        </script>
     @endforeach
 @endif
     <script>
@@ -58,7 +59,7 @@
                 position: 'top-right',
                 loaderBg:'#ff6849',
                 icon: 'info',
-                hideAfter: 3000, 
+                hideAfter: 3000,
                 stack: 6
             });
        @elseif (Session::has('warning'))
@@ -67,7 +68,7 @@
                 position: 'top-right',
                 loaderBg:'#ff6849',
                 icon: 'warning',
-                hideAfter: 3500, 
+                hideAfter: 3500,
                 stack: 6
             });
         @elseif (Session::has('success'))
@@ -76,7 +77,7 @@
                 position: 'top-right',
                 loaderBg:'#ff6849',
                 icon: 'success',
-                hideAfter: 3500, 
+                hideAfter: 3500,
                 stack: 6
             });
         @elseif (Session::has('error'))
@@ -86,8 +87,8 @@
                 loaderBg:'#ff6849',
                 icon: 'error',
                 hideAfter: 3500
-                
+
             });
         @endif
     </script>
-   
+

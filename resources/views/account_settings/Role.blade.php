@@ -96,22 +96,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $key = 1 ?>
-                        @foreach($roles as $role)
+                        @foreach($roles as $key => $role)
                             <tr>
-                                <td>{{ $key++ }}</td>
+                                <td>{{ $key+1 }}</td>
                                 <td>{{$role->name}}</td>
                                 <td>{{$role->description}}</td>
                                 <td>
                                     @if ($role->status == 0)
-                                        
-                     
-                                    <a href="{{ route('status.status_role',$role->id) }}" type="submit" class="btn waves-effect waves-light btn-danger text-white"> غیر  فعال <i class=" fas fa-times"></i> </button>
-                                    
+                                        <a href="{{ route('status.status_role',$role->id) }}" type="submit" class="btn waves-effect waves-light btn-danger text-white"> غیر  فعال <i class=" fas fa-times"></i> </button>
                                     @else
-                                    
-                                    <a href="{{ route('status.status_role',$role->id) }}" type="submit" class="btn waves-effect waves-light btn-success text-white"> فعال <i class=" fas fa-check"></i> </button>
- 
+                                        <a href="{{ route('status.status_role',$role->id) }}" type="submit" class="btn waves-effect waves-light btn-success text-white"> فعال <i class=" fas fa-check"></i> </button>
                                     @endif
                                 </td>
                                 <td>

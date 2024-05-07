@@ -21,7 +21,7 @@
                     <li>
                 @endcan
                 @can('setting_plans')
-                    <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="icon-people"></i><span class="hide-menu">تنظیمات پلان</span></a>
+                    <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="icon-book-open"></i><span class="hide-menu">تنظیمات پلان</span></a>
                         <ul aria-expanded="false" class="collapse">
                             @can('departments')
                             <li><a href="{{ route('department.index') }}">دیپارتمنت ها</a></li>
@@ -39,14 +39,14 @@
                     <li>
                 @endcan
                 @can('setting_projects')
-                    <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="icon-people"></i><span class="hide-menu">تنظیمات پروژه ها</span></a>
+                    <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="icon-notebook"></i><span class="hide-menu">تنظیمات پروژه ها</span></a>
                         <ul aria-expanded="false" class="collapse">
                             @can('projects')
                             <li><a href="{{ route('project.index') }}">پروژه ها</a></li>
                             @endcan
-                            <!-- @can('project_tracking')
-                            <li><a href="{{ route('project_tracking.index') }}">تعقیب پروژه ها</a></li>
-                            @endcan -->
+                            @can('department_activities')
+                            <li><a href="{{ route('department_activity.index') }}">فعالیت های دیپارتمنت</a></li>
+                            @endcan
                         </ul>
                     <li>
                 @endcan

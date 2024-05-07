@@ -25,10 +25,10 @@
                     <div class="card-body">
                     </div>
                     <div class="row">
-                        <div class="col-md-5">
+                        <div class="col-md-8">
                             <div class="form-group row">
                                 <label class="control-label text-end col-md-2">نام </label>
-                                <div class="col-md-8">
+                                <div class="col-md-10">
                                     <input type="text" value="{{ old('goal_name') }}" name="goal_name" class="@error('goal_name') is-invalid @enderror form-control" placeholder="">
                                     @error('goal_name')
                                     <p class="invalid-feedback">{{ $message }}</p>
@@ -36,7 +36,7 @@
                                 </div>
                             </div>
                         </div>
-                      
+
                         <div class="col-md-2">
                             <button type="submit" class="btn btn-success text-white"> <i class="fa fa-check"></i>
                                     ذخیره</button>
@@ -53,10 +53,10 @@
                     <div class="card-body">
                     </div>
                     <div class="row">
-                        <div class="col-md-5">
+                        <div class="col-md-8">
                             <div class="form-group row">
                                 <label class="control-label text-end col-md-2">نام </label>
-                                <div class="col-md-8">
+                                <div class="col-md-10">
                                     <input type="text" value="{{ $edit_goal->goal_name }}" name="goal_name" class="@error('goal_name') is-invalid @enderror form-control" placeholder="">
                                     @error('goal_name')
                                     <p class="invalid-feedback">{{ $message }}</p>
@@ -64,7 +64,7 @@
                                 </div>
                             </div>
                         </div>
-                      
+
                         <div class="col-md-2">
                             <button type="submit" class="btn btn-success text-white"> <i class="fa fa-check"></i>
                                     ذخیره</button>

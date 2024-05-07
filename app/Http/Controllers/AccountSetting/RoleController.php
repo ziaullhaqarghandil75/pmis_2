@@ -20,8 +20,10 @@ class RoleController extends Controller
      */
     public function index()
     {
-      
-        $roles = Role::get();
+        if(!(auth::user()->can('view_role') and auth::user()->can('roles'))){
+            return view('layouts.403');
+        }
+        $roles = Role::orderByDesc('id')->get();
 
         return view('account_settings.role', compact('roles'));
     }
@@ -75,7 +77,7 @@ class RoleController extends Controller
         }
         $roles = Role::find($id);
         $permissions = Permission::get();
-        $permission_categories = PermissionCategory::get();
+        $permission_categories = PermissionCategory::orderByDesc('id')->get();
         $role_permissions = PermissionRole::where('role_id', '=', $roles->id)->get();
 
         return view('account_settings.add_permisson_to_role', compact('roles', 'permissions', 'permission_categories', 'role_permissions'));
@@ -91,9 +93,9 @@ class RoleController extends Controller
         }
         $role_status = Role::find($id);
         $role = Role::find($id);
-      
+
         $role->Permissions()->sync($request->input('permission_id'));
-      
+
         return redirect()->back()->with('success', 'سطح دسترسی ویرایش شد.');
     }
 
@@ -127,6 +129,6 @@ class RoleController extends Controller
                 'status' => '0'
             ]);
             return redirect()->route('role.index')->with('warning', 'حالت سطح دسترسی غیر فعال شد.');
-        }  
+        }
     }
 }

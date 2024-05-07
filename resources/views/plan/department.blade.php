@@ -22,7 +22,7 @@
                 <div class="card-body">
                 </div>
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group row">
                             <label class="control-label text-end col-md-2">نام فارسی</label>
                             <div class="col-md-8">
@@ -33,9 +33,20 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group row">
                             <label class="control-label text-end col-md-2">نام انگلیسی</label>
+                            <div class="col-md-8">
+                                <input type="text" name="name_en" class="@error('name_en') is-invalid @enderror form-control" placeholder="">
+                                @error('name_en')
+                                <p class="invalid-feedback">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group row">
+                            <label class="control-label text-end col-md-2">نوع دیپارتمنت</label>
                             <div class="col-md-8">
                                 <input type="text" name="name_en" class="@error('name_en') is-invalid @enderror form-control" placeholder="">
                                 @error('name_en')

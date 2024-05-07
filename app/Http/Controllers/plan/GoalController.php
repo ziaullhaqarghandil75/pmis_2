@@ -15,7 +15,7 @@ class GoalController extends Controller
     public function index()
     {
         $goal_categories = GoalCategory::with('goals')->get();
-        
+
         $goals = Goal::get();
         $edit_goal_category = false;
         $edit_goal = false;
@@ -39,7 +39,7 @@ class GoalController extends Controller
         $request->validate([
             'goal_name' => 'required|unique:'.Goal::class,
         ]);
-   
+
         // here we will insert product in db
         $goal_category = new Goal();
         $goal_category->goal_name = $request->goal_name;
@@ -65,8 +65,8 @@ class GoalController extends Controller
 
         $edit_goal = Goal::find($id);
         $goal_categories = GoalCategory::get();
-        $goals = Goal::with('goal_categories')->get();
-        
+        $goals = Goal::get();
+
         return view('plan.goal', compact('goal_categories','goals','edit_goal','edit_goal_category'));
     }
 
@@ -90,7 +90,7 @@ class GoalController extends Controller
      */
     public function destroy(string $id)
     {
-        $delete = Goal::find($id); 
+        $delete = Goal::find($id);
         $delete->delete();
         return redirect()->route('goal.index')->with('warning', 'هدف حذف گردید.');
     }

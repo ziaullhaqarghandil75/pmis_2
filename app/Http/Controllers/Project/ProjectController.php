@@ -23,17 +23,16 @@ class ProjectController extends Controller
         if(!(auth::user()->can('view_project') and Auth::user()->can('projects'))){
             return view('layouts.403');
         }
-       
+
         if((auth::user()->can('show_all_projects'))){
             $project_trackings = false;
-            
             $projects = Project::with('goals','units','impliment_departments','management_departments','design_departments')->orderByDesc('id')->get();
         }else{
 
             $project_trackings = ProjectTracking::with('project_projcts','project_departments')->where('department_id','=',auth::user()->department_id)->orderByDesc('id')->get();
-           
+
             $projects = Project::with('goals','units','impliment_departments','management_departments','design_departments')->orderByDesc('id')->get();
-        }   
+        }
         return view('project.project', compact('projects','project_trackings'));
     }
 
@@ -59,7 +58,7 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         if(!(auth::user()->can('add_project') and auth::user()->can('projects'))){
-            return view('layouts.403'); 
+            return view('layouts.403');
         }
         $request->validate([
             'name' => ['required', 'string','unique:'.Project::class],
@@ -78,7 +77,7 @@ class ProjectController extends Controller
         $project->management_department_id     = $request->management_department_id   ;
         $project->design_department_id         = $request->design_department_id    ;
         $project->save();
-        
+
         $project->districts()->sync($request->input('district_id'));
 
         return redirect()->route('project.index')->with('success', 'پروژه جدید اضافه کردید.');
@@ -119,9 +118,9 @@ class ProjectController extends Controller
         if(!(auth::user()->can('edit_project') and auth::user()->can('projects'))){
             return view('layouts.403');
         }
-        
+
         $update = Project::find($id);
-        
+
         $update->update([
             'goal_id' => $request->goal_id,
             'name' => $request->name,
@@ -136,7 +135,7 @@ class ProjectController extends Controller
 
         $update->districts()->sync($request->input('district_id'));
 
-     
+
         return redirect()->route('project.index')->with('success', ' معلومات پروژه شما ویرایش شد.');
     }
 
@@ -149,7 +148,7 @@ class ProjectController extends Controller
             return view('layouts.403');
         }
         $delete = Project::find($id);
-       
+
         $delete->delete();
         return redirect()->route('project.index')->with('warning', 'پروژه شما حذف گردید.');
     }

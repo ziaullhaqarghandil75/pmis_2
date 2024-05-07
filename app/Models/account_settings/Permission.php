@@ -24,11 +24,7 @@ class Permission extends Model
     {
         $this->belongsTo(PermissionCategory::class, 'id', 'permission_gategory_id', 'permission_categories');
     }
-    // public function permission_categories_1():
-    // {
-    //     // return $this->belongsTo(PermissionCategory::class, 'permission_gategory_id ', 'id');
-    //     return $this->belongsTo(PermissionCategory::class, 'permission_gategory_id', 'id');
-    // }
+   
     public function roles()
     {
         return $this->belongsToMany(Role::class,'permission_roles');
