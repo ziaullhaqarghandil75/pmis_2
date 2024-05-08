@@ -22,49 +22,64 @@
                     <h4 class="m-b-0 text-white">ویرایش دیپارتمنت</h4>
                 </div>
                 <div class="card-body">
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group row">
-                            <label class="control-label text-end col-md-2">نام فارسی</label>
-                            <div class="col-md-8">
-                                <input type="text" name="name_da" value="{{ $department->name_da }}" class="@error('name_fa') is-invalid @enderror form-control" placeholder="">
-                                @error('name_fa')
-                                <p class="invalid-feedback">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group row">
-                            <label class="control-label text-end col-md-2">نام انگلیسی</label>
-                            <div class="col-md-8">
-                                <input type="text" name="name_en" value="{{ $department->name_en }}" class="@error('name_en') is-invalid @enderror form-control" placeholder="">
-                                @error('name_en')
-                                <p class="invalid-feedback">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group row">
-                            <label class="control-label col-md-2">حالت</label>
-                            <div class="col-md-8">
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" name="status" value="1" id="customRadio3" class="form-check-input" @if($department->status == 1) checked @endif>
-                                    <label class="form-check-label" for="customRadio3">فعال</label>
-                                </div>
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" name="status" value="0" id="customRadio4" class="form-check-input" @if($department->status == 0) checked @endif>
-                                    <label class="form-check-label" for="customRadio4">غیر فعال</label>
+                    <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="control-labe col-3">نام فارسی*</label>
+                                    <div class="col-md-9">
+                                        <input type="text" value="{{ $department->name_da }}" name="name_da" class="@error('name_da') is-invalid @enderror form-control" placeholder="">
+                                        @error('name_da')
+                                        <p class="invalid-feedback">{{ $message }}</p>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            <div class="col-md-4">
+                                <div class="form-group row">
+                                    <label class="control-label col-md-3">نام انگلیسی*</label>
+                                    <div class="col-md-9">
+                                        <input type="text" value="{{ $department->name_en }}" name="name_en" class="@error('name_en') is-invalid @enderror form-control" placeholder="">
+                                        @error('name_en')
+                                        <p class="invalid-feedback">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group has-danger row">
+                                    <label class="control-label col-md-3">نو عیت دیپارتمنت*</label>
+                                    <div class="col-md-8">
+                                        <select name="type_of_department" class="form-control form-select">
+                                            <option value="0">--انتخاب نو عیت دیپارتمنت--</option>
+
+                                            <option  value="1" {{ ($department->type_of_department == 1) ? 'selected':''}}>تطبیق کننده </option>
+                                            <option  value="2" {{ ($department->type_of_department == 2) ? 'selected':''}}>مدیریت کننده </option>
+                                            <option  value="3" {{ ($department->type_of_department == 3) ? 'selected':''}}>دیزاین کننده </option>
+                                            <option  value="4" {{ ($department->type_of_department == 4) ? 'selected':''}}>نظارت کننده کننده </option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group row">
+                                <label class="control-label col-md-4">حالت</label>
+                                <div class="col-md-8">
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" name="status" value="1" id="customRadio3" class="form-check-input" {{ ($department->status == 1) ? 'checked':''}}>
+                                        <label class="form-check-label" for="customRadio3">فعال</label>
+                                    </div>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" name="status" value="0" id="customRadio4" class="form-check-input" {{ ($department->status == 0) ? 'checked':''}}>
+                                        <label class="form-check-label" for="customRadio4">غیر فعال</label>
+                                    </div>
+                                </div>
+                            </div>
                     </div>
-                    <div class="form-actions">
-                        <div class="card-body">
-                            <button type="submit" class="btn btn-success text-white"> <i class="fa fa-check"></i>
-                                ویرایش</button>
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-success w-100 text-white">
+                                     ویرایش معلومات</button>
                         </div>
                     </div>
                 </div>
