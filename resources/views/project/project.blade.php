@@ -28,11 +28,11 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>هدف</th>
                         <!-- <th>دسته بندی هدف</th> -->
                         <th>اسم پروژه</th>
+                        <th>برنامه</th>
                         <th>موقعیت</th>
-                        <th>بودیجه</th>
+                        <th>تعهد بودجوی</th>
                         <th>تطبیق کننده</th>
                         <th>مدیریت کننده</th>
                         <th>دیزاین کننده</th>
@@ -41,15 +41,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    
+
                     @foreach($projects as  $key => $project)
                         @if(!$project_trackings == false)
                             @foreach($project_trackings as $key => $project_tracking )
                                 @if($project_tracking->project_id == $project->id)
                                     <tr>
                                         <td>{{ $key+1 }}</td>
-                                        <td>@foreach($project->goals as $goal){{ $goal->name }} @endforeach</td>
                                         <td>{{ $project->name }}</td>
+                                        <td>@foreach($project->goals as $goal){{ $goal->name }} @endforeach</td>
                                         <td>@foreach($project->districts as $district){{ $district->name }} @endforeach</td>
                                         <td>10000 افغانی</td>
                                         <td>@foreach($project->impliment_departments as $impliment_department){{ $impliment_department->name_da }} @endforeach</td>
@@ -58,7 +58,7 @@
                                         <?php
                                             $project_modes = App\Models\Project\ProjectTracking::with('project_departments','percentage_project_view')->where('project_id','=',$project_tracking->project_id)->orderByDesc('id')->first();
                                         ?>
-                                           
+
                                         <td>
                                             @foreach($project_modes->project_departments as $project_department)
                                             <?php
@@ -80,7 +80,7 @@
 
                                                 <div class="dropdown-menu animated flipInY">
                                                 <a  class="dropdown-item bg-info" href="{{ route('project.show',$project->id) }}" type="submit" class="btn btn-info text-white">توضیحات <i class="icons-Info-Window"></i> </a>
-                                            
+
                                                 @can('edit_project')
                                                 <div class="dropdown-divider"></div>
                                                 <a class="dropdown-item bg-info " href="{{ route('project.edit',$project->id) }}" type="submit" class="btn btn-success text-white">ویرایش <i class="fas fa-eye-dropper"></i> </a>
@@ -92,7 +92,7 @@
                                                     @method('delete')
                                                     @csrf
                                                         <button type="submit" class="dropdown-item btn bg-danger ">حذف <i class="fas fa-trash-alt"></i> </button>
-                                                </form>    
+                                                </form>
                                                 @endcan
                                             <div class="dropdown-divider"></div>
                                                 <a class="dropdown-item bg-info " href="{{ route('project_tracking.show',$project->id) }}" type="submit" class="btn btn-success text-white">تعقیب پروژه <i class="icons-Management"></i> </a>
@@ -104,8 +104,8 @@
                         @else
                             <tr>
                                         <td>{{ $key+1 }}</td>
-                                        <td>@foreach($project->goals as $goal){{ $goal->name }} @endforeach</td>
                                         <td>{{ $project->name }}</td>
+                                        <td>@foreach($project->goals as $goal){{ $goal->name }} @endforeach</td>
                                         <td>@foreach($project->districts as $district){{ $district->name }} @endforeach</td>
                                         <td>10000 افغانی</td>
                                         <td>@foreach($project->impliment_departments as $impliment_department){{ $impliment_department->name_da }} @endforeach</td>
@@ -133,7 +133,7 @@
                                                     </div>
                                                 @endforeach
                                             @else
-                                            پروژ انتقال نه شده است.    
+                                            پروژ انتقال نه شده است.
                                             @endif
                                         </td>
                                         <td>
@@ -155,7 +155,7 @@
                                                     @method('delete')
                                                     @csrf
                                                         <button type="submit" class="dropdown-item btn bg-danger ">حذف <i class="fas fa-trash-alt"></i> </button>
-                                                </form> 
+                                                </form>
                                                 @endcan
 
                                             <div class="dropdown-divider"></div>

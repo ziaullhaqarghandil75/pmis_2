@@ -3,6 +3,7 @@
 
 <head>
     @include('layouts.head')
+    @yield('style')
 </head>
 
 <body class="skin-blue fixed-layout">

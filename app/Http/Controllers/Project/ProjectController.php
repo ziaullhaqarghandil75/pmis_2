@@ -8,10 +8,13 @@ use App\Models\Plan\District;
 use App\Models\Plan\Goal;
 use App\Models\Plan\GoalCategory;
 use App\Models\Plan\Unit;
+use App\Models\Project\budgets;
 use App\Models\Project\Project;
 use App\Models\Project\ProjectTracking;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class ProjectController extends Controller
 {
@@ -61,7 +64,18 @@ class ProjectController extends Controller
             return view('layouts.403');
         }
         $request->validate([
-            'name' => ['required', 'string','unique:'.Project::class],
+            'name'                      => 'required|string|unique:projects',
+            'number'                    => 'required_without_all:width,length_p',
+            'width'                     => 'required_without_all:number',
+            'length_p'                  => 'required_without_all:number',
+            'unit_id'                   => 'required|exists:units,id',
+            'goal_id'                   => 'required|exists:goal_categories,id',
+            'impliment_department_id'   => 'required|exists:departments,id',
+            'management_department_id'  => 'required|exists:departments,id',
+            'design_department_id'      => 'required|exists:departments,id',
+            'district_id'               => 'required|exists:districts,id',
+            'main_budget'               => 'required|numeric',
+            'for_this_year'             => 'required|numeric|lte:main_budget',
         ]);
         // dd($request->all());
 
@@ -79,6 +93,14 @@ class ProjectController extends Controller
         $project->save();
 
         $project->districts()->sync($request->input('district_id'));
+
+        $budget = new budgets();
+        $budget->project_id         = $project->id;
+        $budget->department_id      = auth()->user()->department_id;
+        $budget->year               = Carbon::now()->format('Y');
+        $budget->main_budget        = $request->main_budget;
+        $budget->for_this_year      = $request->for_this_year;
+        $budget->save();
 
         return redirect()->route('project.index')->with('success', 'پروژه جدید اضافه کردید.');
     }
@@ -105,7 +127,8 @@ class ProjectController extends Controller
         $units = Unit::get();
         $depratments = Depratment::where('status','=','1')->get();
         $districts = District::get();
-        $project = Project::find($id);
+
+        $project = Project::with('budgets')->find($id);
 
         return view('project.edit_project',compact('project','goals','units','depratments','districts','districts'));
     }
@@ -118,13 +141,28 @@ class ProjectController extends Controller
         if(!(auth::user()->can('edit_project') and auth::user()->can('projects'))){
             return view('layouts.403');
         }
+        // dd($request);
+        $request->validate([
+            'name'                      => ['required','string',Rule::unique('projects')->ignore($id)],
+            'number'                    => 'required_without_all:width,length_p',
+            'width'                     => 'required_without_all:number',
+            'length_p'                  => 'required_without_all:number',
+            'unit_id'                   => 'required|exists:units,id',
+            'goal_id'                   => 'required|exists:goal_categories,id',
+            'impliment_department_id'   => 'required|exists:departments,id',
+            'management_department_id'  => 'required|exists:departments,id',
+            'design_department_id'      => 'required|exists:departments,id',
+            'district_id'               => 'required|exists:districts,id',
+            'main_budget'               => 'required|numeric',
+            'for_this_year'             => 'required|numeric|lte:main_budget',
+        ]);
 
         $update = Project::find($id);
 
         $update->update([
             'goal_id' => $request->goal_id,
             'name' => $request->name,
-            'length' => $request->length,
+            'length' => $request->length_p,
             'width' => $request->width,
             'number' => $request->number,
             'unit_id' => $request->unit_id,
@@ -135,6 +173,11 @@ class ProjectController extends Controller
 
         $update->districts()->sync($request->input('district_id'));
 
+        $budget = budgets::where('project_id','=',$id)->where('department_id','=',auth()->user()->department_id)->first();
+        $budget->update([
+            'main_budget' => $request->main_budget,
+            'for_this_year' => $request->for_this_year,
+        ]);
 
         return redirect()->route('project.index')->with('success', ' معلومات پروژه شما ویرایش شد.');
     }

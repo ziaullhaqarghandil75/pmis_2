@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
-    
+
     use HasFactory;
     protected $guarded = [];
     public function goals(){
@@ -32,6 +32,10 @@ class Project extends Model
     public function districts()
     {
         return $this->belongsToMany(District::class,'project_districts');
+    }
+    public function budgets()
+    {
+        return $this->hasMany(budgets::class);
     }
 
 }
