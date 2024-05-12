@@ -72,6 +72,17 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-md-3">
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3">ترتیب فعالیت*</label>
+                                        <div class="col-md-9">
+                                            <input type="number" value="{{ old('sort_of_activity') }}" name="sort_of_activity" class="@error('sort_of_activity') is-invalid @enderror form-control" placeholder="">
+                                            @error('sort_of_activity')
+                                            <p class="invalid-feedback">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-md-2">
                                     <div class="form-group row">
                                     <label class="control-label col-md-4">حالت</label>
@@ -125,6 +136,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="col-md-3">
                                     <div class="form-group row">
                                         <label class="control-label col-md-3">فیصدی*</label>
@@ -151,8 +163,18 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-md-3">
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3">ترتیب فعالیت*</label>
+                                        <div class="col-md-9">
+                                            <input type="number" value="{{ $edit_department_activity->sort_of_activity }}" name="sort_of_activity" class="@error('sort_of_activity') is-invalid @enderror form-control" placeholder="">
+                                            @error('sort_of_activity')
+                                            <p class="invalid-feedback">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
 
-                        </div>
                             <div class="col-md-1">
                                 <button type="submit" class="btn btn-success w-100 text-white">
                                          ویرایش معلومات</button>
@@ -179,6 +201,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>اسم</th>
+                                <th>ترتیب فعالیت</th>
                                 <th>روز ها</th>
                                 <th>فیصدی</th>
                                 <th>دیپارتمنت</th>
@@ -196,6 +219,7 @@
                             <tr>
                                 <td>{{ $key+1 }}</td>
                                 <td>{{ $department_activity->acitvity_name }}</td>
+                                <td>{{ $department_activity->sort_of_activity }}</td>
                                 <td>{{ $department_activity->acitvity_deys }}</td>
                                 <td>%{{ $department_activity->acitvity_percentage }}</td>
                                 <td>

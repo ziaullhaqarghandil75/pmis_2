@@ -8,6 +8,8 @@
 @endsection
 
 @section('content')
+<?php  $sort_department = 1 ?>
+
 <div class="row page-titles">
     <div class="col-md-12 align-self-center text-end">
         <div class="d-flex justify-content-end align-items-center">
@@ -26,7 +28,8 @@
         <h4 class="m-b-0 text-white">{{ $project->name }}</h4>
     </div>
     <div class="row g-0">
-        <div class="col-lg-1 col-md-1">
+        @if(!$project->length == null or  !$project->width == null)
+        <div class="col-md-2">
             <div class="card border">
                 <div class="card-body">
                     <div class="row">
@@ -34,6 +37,7 @@
                             <div class="d-flex no-block align-items-center">
                                 <div>
                                     <p class="text-muted">طول : {{ $project->length }}</p>
+                                    <p class="text-muted">طول : {{ $project->width }}</p>
                                 </div>
                             </div>
                         </div>
@@ -41,30 +45,17 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-1 col-md-1">
-            <div class="card border">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="d-flex no-block align-items-center">
-                                <div>
-                                    <p class="text-muted">عرض : {{ $project->width }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
+        @endif
         @if(!$project->number == null)
-        <div class="col-lg-1 col-md-1">
+        <div class="col-md-2">
             <div class="card border">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="d-flex no-block align-items-center">
                                 <div>
-                                    <p class="text-muted">عرض : {{ $project->number }}</p>
+                                    <p class="text-muted">تعداد : {{ $project->number }}</p>
                                 </div>
                             </div>
                         </div>
@@ -156,9 +147,9 @@
         <div class="row">
 
             <h4 class="card-title col-1">لیست گزارشات</h4>
-            
-            @if($percentage == 100)
-            
+
+            @if($total_percentage == 100)
+
             <h4 class="label label-danger col-2">فیصدی گزارش شما 100 فیصد تکمیل است </h4>
             @else
             <h4 class="card-title col-2"><a href=""  data-bs-target="#send-report-modal" data-bs-toggle="modal"
@@ -175,36 +166,42 @@
                                 <thead>
                                     <tr class="footable-filtering">
                                         <th data-bs-toggle="true"> #</th>
+                                        <th data-hide="all"> اسم فعالیت </th>
                                         <th data-hide="all"> توضیحات </th>
                                         <th data-hide="all"> فیصدی </th>
                                         <th data-hide="all"> تاریخ </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($reports as $key => $report)
+                                    @foreach($reports as  $report)
                                         <tr>
-                                            <td>{{ $key+1 }}</td>
+
+                                            <td>{{ $sort_department++ }}</td>
+                                            <td>@foreach($report->department_activities  as $department_activity) {{ $department_activity->acitvity_name }} @endforeach</td>
                                             <td>{{ $report->description }}</td>
-                                            <td>{{ $report->percentage }}</td>
-                                            <td>{{ jdate($report->create_at)->format('%A - d / m / Y')  }}</td>
+                                            <td>
+                                                @foreach($report->department_activities  as $department_activity)
+                                                   {{ $department_activity->acitvity_percentage }}%
+                                                @endforeach
+                                            </td>
+                                            <td>{{ jdate($report->created_at)->format('l - d / m / Y')  }}</td>
                                         </tr>
-                                        
                                     @endforeach
                                 </tbody>
                             </table>
                             <table>
-                                <td  class="label-info" >مجموع فصیدی تکیمیل شده : {{ $percentage }}</td>
+                                <td  class="label-info" >مجموع فصیدی تکیمیل شده : {{ $total_percentage  }}</td>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>                           
+        </div>
     </div>
 </div>
 <!-- end lsit project report -->
 
-                        
+
 <!-- start send modal content -->
 <div id="send-report-modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
@@ -216,15 +213,19 @@
             <div class="modal-body">
                 <form action="{{ route('report_project_tracking.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    
+
                     <div class="form-group">
                         <input  name="department_id" type="hidden" value="{{ $department_id }}">
                         <input name="project_id" type="hidden" value="{{ $id }}">
                         <input name="project_tracking_id" type="hidden" value="{{ $project_tracking_id }}">
                     </div>
                     <div class="form-group">
-                        <label for="recipient-name" class="form-label">فیصدی کار انجام شده*</label>
-                        <input name="percentage" type="number" class="form-control" id="recipient-name">
+                        @foreach ($department_activities as $department_activity)
+                            @if ($department_activity->sort_of_activity == $sort_department)
+                                    <input name="department_activity_id" type="hidden" value="{{ $department_activity->id }}">
+                                    <div class="col-12 label label-table label-info"><h4>ارسال گزارش فعالیت: {{ $department_activity->acitvity_name }}</h4></div>
+                            @endif
+                        @endforeach
                     </div>
                     <div class="form-group">
                         <label for="message-text" class="form-label">توضیحات*</label>
@@ -237,7 +238,7 @@
                     </div>
                 </form>
             </div>
-            
+
         </div>
     </div>
 </div>
@@ -249,5 +250,13 @@
 
 <script src="{{ asset('assets/node_modules/footable/js/footable.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('dist/js/pages/footable-init.js') }}" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment-jalaali.min.js"></script>
+
+<script>
+    // تنظیم تاریخ به تاریخ جاری هجری شمسی
+    var shamsiDate = moment().format('jYYYY/jM/jD');
+    document.getElementById('shamsi-date').innerHTML = shamsiDate;
+</script>
 
 @endsection

@@ -10,7 +10,7 @@ use App\Models\Project\ReportProjectTracking;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Morilog\Jalali\Jalalian;
 
 class ProjectTrackingController extends Controller
 {
@@ -50,7 +50,6 @@ class ProjectTrackingController extends Controller
         $project_trackings = ProjectTracking::with('project_departments','project_projcts')->where('project_id','=',$id)->get();
         $percentage_project_trackings = ReportProjectTracking::where('project_id','=',$id)->get();
         $departments = Depratment::where('status','=','1')->get();
-        // $current_department = Depratment::where('status','=','1')->where('id','=',auth::user()->department_id)->pluck('id');
 
         $project = Project::with('goals','units','impliment_departments','management_departments','design_departments')->find($id);
         return view('project.project_tracking', compact('project','departments','project_trackings','percentage_project_trackings'));
@@ -84,17 +83,17 @@ class ProjectTrackingController extends Controller
         $project_name = Project::select('name')->find($id);
         $ProjectTracking = new ProjectTracking();
 
-        // start check for percentage
         $current_department_id = $ProjectTracking->where('project_id','=',$id)->orderByDesc('id')->first();
-        // dd($current_department_id);
+
         if(!$current_department_id  == null){
 
-            $recprot_current_department_percentage = ReportProjectTracking::where('project_id','=',$id)
-                                                                            ->where('department_id','=',$current_department_id->department_id)
-                                                                            ->sum('percentage');
+            $current_department_percentage = ReportProjectTracking::where('report_project_tracking.project_id', $id)
+            ->where('report_project_tracking.department_id', $current_department_id->department_id)
+            ->join('department_activities', 'department_activities.id', '=', 'report_project_tracking.department_activity_id')
+            ->sum('department_activities.acitvity_percentage');
 
-            if($recprot_current_department_percentage < 100){
-                return redirect()->back()->with('warning', 'فیصدی کار انجام کم است .');
+            if($current_department_percentage < 100){
+                return redirect()->back()->with('warning', 'فیصدی فعالیت انجام کم است .');
             }
         }
         // end check for percentage
@@ -118,13 +117,11 @@ class ProjectTrackingController extends Controller
                 $file->move($path, $fileName);
             }
 
-            // here we will insert product in db
-
             $ProjectTracking->project_id = $id;
             $ProjectTracking->department_id = $request->department_id;
             $ProjectTracking->description = $request->description;
             $ProjectTracking->file = $path.$fileName;
-            $ProjectTracking->date_of_send = $request->date_of_send;
+            $ProjectTracking->date_of_send = Jalalian::fromFormat('Y/m/d', $request->date_of_send)->toCarbon();
             $ProjectTracking->save();
 
 

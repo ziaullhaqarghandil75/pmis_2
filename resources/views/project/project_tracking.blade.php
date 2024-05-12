@@ -1,8 +1,16 @@
 @extends('layouts.master')
 
 @section('style')
+
 <link href="{{ asset('dist/css/pages/timeline-vertical-horizontal.css') }}" rel="stylesheet">
-<link href="{{ asset('dist/css/pages/timeline-vertical-horizontal.css') }}" rel="stylesheet">
+<link href="{{ asset('dist/datepicker/node_modules/vazir-font/dist/font-face.css') }}" rel="stylesheet">
+<link href="{{ asset('dist/date1/kamadatepicker.min.css') }}" rel="stylesheet">
+
+<script src="{{ asset('dist/date1/kamadatepicker.min.js') }}"></script>
+<script src="{{ asset('dist/date1/kamadatepicker.holidays.js') }}"></script>
+<script src="{{ asset('dist/date1/kamadatepicker.js') }}"></script>
+
+
 @endsection
 
 @section('content')
@@ -33,8 +41,6 @@
 
                     <div class="form-group">
                         <label class="form-label">انتخاب دیپارتمنت*</label>
-
-
                         <select name="department_id" class="form-select col-12" id="inlineFormCustomSelect">
                                 <option value="0" selected="">انتخاب دیپارتمنت</option>
                             @foreach($departments as $department)
@@ -52,7 +58,8 @@
                     </div>
                     <div class="form-group">
                         <label for="recipient-name" class="form-label">تاریخ ارسال*</label>
-                        <input name="date_of_send" type="datetime-local" class="form-control" id="recipient-name">
+                        {{-- <input type="text" id="date2"> --}}
+                        <input name="date_of_send" id="date2"  type="text" class="form-control">
                     </div>
                     <div class="form-group">
                         <label for="message-text" class="form-label">توضیحات*</label>
@@ -71,15 +78,14 @@
 </div>
 <!-- end send modal content -->
 
-
-
-
 <div class="row">
     <div class="card-header bg-info">
         <h4 class="m-b-0 text-white">{{ $project->name }}</h4>
     </div>
     <div class="row g-0">
-        <div class="col-lg-1 col-md-1">
+        {{-- @dd($project) --}}
+        @if(!$project->length == null or !$project->width == null)
+        <div class=" col-md-2">
             <div class="card border">
                 <div class="card-body">
                     <div class="row">
@@ -87,20 +93,6 @@
                             <div class="d-flex no-block align-items-center">
                                 <div>
                                     <p class="text-muted">طول : {{ $project->length }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-1 col-md-1">
-            <div class="card border">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="d-flex no-block align-items-center">
-                                <div>
                                     <p class="text-muted">عرض : {{ $project->width }}</p>
                                 </div>
                             </div>
@@ -109,15 +101,17 @@
                 </div>
             </div>
         </div>
+        @endif
         @if(!$project->number == null)
-        <div class="col-lg-1 col-md-1">
+        <div class="col-md-2">
             <div class="card border">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="d-flex no-block align-items-center">
                                 <div>
-                                    <p class="text-muted">عرض : {{ $project->number }}</p>
+                                    <p class="text-muted">تعداد : {{ $project->number }}</p>
+                                    <p class="text-muted"></p>
                                 </div>
                             </div>
                         </div>
@@ -126,7 +120,7 @@
             </div>
         </div>
         @endif
-        <div class="col-lg-1 col-md-1">
+        <div class="col-md-1">
             <div class="card border">
                 <div class="card-body">
                     <div class="row">
@@ -142,7 +136,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-3">
+        <div class="col-md-3">
             <div class="card border">
                 <div class="card-body">
                     <div class="row">
@@ -161,7 +155,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-3">
+        <div class="col-md-3">
             <div class="card border">
                 <div class="card-body">
                     <div class="row">
@@ -180,7 +174,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-3">
+        <div class="col-md-3">
             <div class="card border">
                 <div class="card-body">
                     <div class="row">
@@ -200,6 +194,7 @@
             </div>
         </div>
     </div>
+
     <div class="col-12">
         <div class="card">
             <div class="card-body">
@@ -208,13 +203,15 @@
                         <li class="timeline-inverted">
                             <button type="button" data-bs-target="#responsive-modal" data-bs-toggle="modal"
                                                 class="btn btn-success text-white"><i class="fas fa-check"></i>  ارسال پروژه</button>
+                                                <div id="shamsi-date"></div>
+
                         </li>
                     @else
                         <?php  $percentage = 0 ?>
                         @foreach($project_trackings as $key => $project_tracking)
                             <li @if($loop->even) class="timeline-inverted" @endif>
                                 <div class="timeline-badge success">
-                                    @foreach($project_tracking->project_departments as $project_department) {{ $project_department->name_da }} @endforeach
+                                    مرحله {{ $key+1 }}
                                 </div>
                                 <div @if(!$percentage == 100) style="background-color: #FFF7F7;" @endif class="timeline-panel">
                                     <div class="timeline-heading">
@@ -222,7 +219,10 @@
                                         <p><small class="text-muted"><i class="fa fa-clock-o"></i>تاریخ ارسال به این بخش : {{ jdate($project_tracking->date_of_send)->format('%A - d / m / Y') }}</small></p>
                                         <p>
                                                 <?php
-                                                   $percentage = App\Models\Project\ReportProjectTracking::where('project_id','=',$project_tracking->project_id)->where('project_tracking_id','=',$project_tracking->id)->where('department_id','=',$project_tracking->department_id)->sum('percentage');
+                                                   $percentage = App\Models\Project\ReportProjectTracking::where('report_project_tracking.project_id', $project_tracking->project_id)
+                                                                                                            ->where('report_project_tracking.department_id', $project_tracking->department_id)
+                                                                                                            ->join('department_activities', 'department_activities.id', '=', 'report_project_tracking.department_activity_id')
+                                                                                                            ->sum('department_activities.acitvity_percentage');
                                                  ?>
                                             فیصدی کار انجام شده : {{ $percentage }}
                                             <div class="progress progress-xs margin-vertical-10 ">
@@ -273,6 +273,59 @@
 @endsection
 @section('script')
 <script src="{{ asset('assets/node_modules/horizontal-timeline/js/horizontal-timeline.js') }}"></script>
+<script>
+    kamaDatepicker('date1', { buttonsColor: "red" });
+
+    var customOptions = {
+        placeholder: "روز / ماه / سال"
+        , twodigit: true
+        , closeAfterSelect: true
+        , nextButtonIcon: "fa fa-arrow-circle-right"
+        , previousButtonIcon: "fa fa-arrow-circle-left"
+        , buttonsColor: "blue"
+        , forceFarsiDigits: true
+        , markToday: true
+        , markHolidays: true
+        , highlightSelectedDay: true
+        , sync: true
+        , gotoToday: true
+    }
+    kamaDatepicker('date2', customOptions);
+
+    kamaDatepicker('date3', {
+        nextButtonIcon: "assets/timeir_prev.png"
+        , previousButtonIcon: "assets/timeir_next.png"
+        , forceFarsiDigits: true
+        , markToday: true
+        , markHolidays: true
+        , highlightSelectedDay: true
+        , sync: true
+        , pastYearsCount: 0
+        , futureYearsCount: 3
+        , swapNextPrev: true
+        , holidays: HOLIDAYS // from kamadatepicker.holidays.js
+        , disableHolidays: true
+    });
+
+    // kamaDatepicker('date4', {
+    //     position: 'top' // top, bottom or auto
+    // });
+
+    kamaDatepicker('date5-1', {
+        position: 'auto' // top, bottom or auto
+        , parentId: 'date5-parent'
+    });
+    kamaDatepicker('date5-2', {
+        position: 'auto' // top, bottom or auto
+        , parentId: 'date5-parent'
+    });
+
+    // for testing sync functionallity
+    // $("#date2").val("1311/10/01");
+
+    // init without ids inputs
+    document.querySelectorAll('#without-ids input').forEach(input => { kamaDatepicker(input); });
+</script>
 
 
 @endsection

@@ -14,4 +14,7 @@ class ReportProjectTracking extends Model
     public function department_reprot(){
         return $this->hasMany(Depratment::class,'id');
     }
+    public function department_activities(){
+        return $this->hasMany(DepartmentActivity::class,'id','department_activity_id');
+    }
 }

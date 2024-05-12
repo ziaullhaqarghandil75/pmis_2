@@ -47,6 +47,7 @@ class DepartmentActivityController extends Controller
             'acitvity_percentage' => ['required','numeric','between:0,100'],
             'department_id'       => ['required'],
             'status'              => ['required','numeric','between:0,1'],
+            'sort_of_activity'    => ['required','numeric'],
         ]);
         // dd($request->all());
 
@@ -68,6 +69,7 @@ class DepartmentActivityController extends Controller
         $departmentd_ctivity->acitvity_percentage    = $request->acitvity_percentage;
         $departmentd_ctivity->department_id          = $request->department_id;
         $departmentd_ctivity->status                 = $request->status;
+        $departmentd_ctivity->sort_of_activity       = $request->sort_of_activity;
         $departmentd_ctivity->save();
 
         return redirect()->back()->with('success', 'فعالیت شما اضافه گریدید.');
@@ -109,7 +111,8 @@ class DepartmentActivityController extends Controller
             'acitvity_name'       => ['required', 'string'],
             // 'acitvity_deys'       => ['numeric'],
             'acitvity_percentage' => ['required','numeric','between:0,100'],
-            'department_id'       => ['required'],
+            'department_id'       => ['required','numeric'],
+            'sort_of_activity'       => ['required','numeric'],
         ]);
 
         $update = DepartmentActivity::find($id);
@@ -129,6 +132,7 @@ class DepartmentActivityController extends Controller
             'acitvity_deys' => $request->acitvity_deys,
             'acitvity_percentage' => $request->acitvity_percentage,
             'department_id' => $request->department_id,
+            'sort_of_activity' => $request->sort_of_activity,
         ]);
         return redirect()->back()->with('success', 'فعالیت شما ویرایش گریدید.');
     }

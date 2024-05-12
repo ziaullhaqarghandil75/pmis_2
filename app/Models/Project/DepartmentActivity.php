@@ -14,4 +14,8 @@ class DepartmentActivity extends Model
     {
         return $this->hasMany(Depratment::class,"id","department_id");
     }
+    // public function department_activities()
+    // {
+    //     return $this->hasMany(Depratment::class,"id","department_id");
+    // }
 }
