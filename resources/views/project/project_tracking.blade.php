@@ -25,58 +25,10 @@
     </div>
 </div>
 
+<?php
+    $level = 1;
+?>
 
-<!-- start send modal content -->
-<div id="responsive-modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">ارسال پروژه به بخش بعدی</h4>
-                <button type="submit" class="btn-close" data-bs-dismiss="modal" aria-hidden="true">×</button>
-            </div>
-            <div class="modal-body">
-                <form action="{{ route('project_tracking.update', $project->id ) }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    @method('put')
-
-                    <div class="form-group">
-                        <label class="form-label">انتخاب دیپارتمنت*</label>
-                        <select name="department_id" class="form-select col-12" id="inlineFormCustomSelect">
-                                <option value="0" selected="">انتخاب دیپارتمنت</option>
-                            @foreach($departments as $department)
-                                @if((auth()->user()->can('all_tracking_departments')))
-                                    <option value="{{ $department->id }}">{{ $department->name_da }}</option>
-                                @elseif(auth()->user()->department_id != $department->id)
-                                    <option value="{{ $department->id }}">{{ $department->name_da }}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="form-label">فایل*</label>
-                        <input name="file" type="file" class="form-control" id="recipient-name">
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="form-label">تاریخ ارسال*</label>
-                        {{-- <input type="text" id="date2"> --}}
-                        <input name="date_of_send" id="date2"  type="text" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="message-text" class="form-label">توضیحات*</label>
-                        <textarea name="description" rows="5" class="form-control" id="message-text"></textarea>
-                    </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-default waves-effect" data-bs-dismiss="modal">لغو</button>
-                    <button type="submit" class="btn btn-success text-white"> <i class="far fa-share-square"></i>
-                                ارسال</button>
-                    </div>
-                </form>
-            </div>
-
-        </div>
-    </div>
-</div>
-<!-- end send modal content -->
 
 <div class="row">
     <div class="card-header bg-info">
@@ -199,7 +151,8 @@
         <div class="card">
             <div class="card-body">
                 <ul class="timeline">
-                    @if($project_trackings->isEmpty())
+                    @if($project_trackings->isEmpty() and auth()->user()->can('all_tracking_departments'))
+
                         <li class="timeline-inverted">
                             <button type="button" data-bs-target="#responsive-modal" data-bs-toggle="modal"
                                                 class="btn btn-success text-white"><i class="fas fa-check"></i>  ارسال پروژه</button>
@@ -207,23 +160,25 @@
 
                         </li>
                     @else
-                        <?php  $percentage = 0 ?>
+
                         @foreach($project_trackings as $key => $project_tracking)
+                            <?php $level++ ?>
                             <li @if($loop->even) class="timeline-inverted" @endif>
                                 <div class="timeline-badge success">
-                                    مرحله {{ $key+1 }}
+                                    {{$key+1}}
                                 </div>
-                                <div @if(!$percentage == 100) style="background-color: #FFF7F7;" @endif class="timeline-panel">
+                                <?php
+                                $percentage = App\Models\Project\ReportProjectTracking::where('report_project_tracking.project_id', $project_tracking->project_id)
+                                                                                         ->where('report_project_tracking.department_id', $project_tracking->department_id)
+                                                                                         ->join('department_activities', 'department_activities.id', '=', 'report_project_tracking.department_activity_id')
+                                                                                         ->sum('department_activities.acitvity_percentage');
+                                ?>
+                                <div  @if($percentage == 100) style="background-color: #fad4d4;" @endif id="myDiv" class="timeline-panel">
                                     <div class="timeline-heading">
                                         <h4 class="timeline-title">@foreach($project_tracking->project_departments as $project_department) {{ $project_department->name_da }} @endforeach</h4>
                                         <p><small class="text-muted"><i class="fa fa-clock-o"></i>تاریخ ارسال به این بخش : {{ jdate($project_tracking->date_of_send)->format('%A - d / m / Y') }}</small></p>
                                         <p>
-                                                <?php
-                                                   $percentage = App\Models\Project\ReportProjectTracking::where('report_project_tracking.project_id', $project_tracking->project_id)
-                                                                                                            ->where('report_project_tracking.department_id', $project_tracking->department_id)
-                                                                                                            ->join('department_activities', 'department_activities.id', '=', 'report_project_tracking.department_activity_id')
-                                                                                                            ->sum('department_activities.acitvity_percentage');
-                                                 ?>
+
                                             فیصدی کار انجام شده : {{ $percentage }}
                                             <div class="progress progress-xs margin-vertical-10 ">
                                                 <div class="progress-bar bg-success progress-bar-striped" style="width: <?php echo $percentage; ?>% ;height:15px;">{{ $percentage }}</div>
@@ -246,7 +201,6 @@
                                                 <button type="button" data-bs-target="#responsive-modal" data-bs-toggle="modal"
                                                         class="btn btn-primary text-white"><i class="far fa-share-square"></i> ارسال پروژه</button>
                                             @else
-
                                                 @if($project_tracking->department_id == auth()->user()->department_id)
                                                     <button type="button" data-bs-target="#responsive-modal" data-bs-toggle="modal"
                                                         class="btn btn-primary text-white"><i class="far fa-share-square"></i> ارسال پروژه</button>
@@ -255,9 +209,38 @@
                                         @endif
                                         <a href="{{ route('report_project_tracking.show',[$project->id,$project_tracking->department_id,$project_tracking->id]) }}"
                                                 class="btn btn-info text-white"><i class="fas fa-info-circle"></i> گزارش</a>
+                                        @can('add_budget_after_design')
+                                            @foreach ($project->design_departments as $design_department)
+                                                @if($percentage == 100 and $design_department->id == $project_tracking->department_id)
+                                                    <button type="button" data-bs-target="#responsive-modal-budgets" data-bs-toggle="modal"
+                                                    class="btn btn-info text-white"><i class="fas fa-dollar-sign"></i> افزودن بودیجه بعد از دیزاین</button>
+                                                @endif
+                                            @endforeach
+                                        @endcan
+                                        @can('add_contract_budget')
+                                        @foreach ($project->impliment_departments as $impliment_department)
+                                            @foreach($project_tracking->project_departments as $project_department)
+                                                <?php
+                                                $rocurement_department = App\Models\Plan\Depratment::where('name_da','LIKE','%تدارکات%')->first();
+                                                ?>
+
+                                                @if (
+                                                    ($impliment_department->name_da == 'سکتور خصوصی' or  $impliment_department->name_da == 'سکتور خصوصی')
+                                                and !$rocurement_department == null
+                                                and ($project_department->name_da == 'ریاست تدارکات' or $project_department->name_da == 'ریاست_تدارکات' or $project_department->name_da == 'تدارکات')
+                                                )
+                                                        <button type="button" data-bs-target="#responsive-modal-contract_budget" data-bs-toggle="modal"
+                                                        class="btn btn-info text-white"><i class="fas fa-dollar-sign"></i>افزودن بودیجه قرار داد شده</button>
+                                                @elseif ($percentage == 100 and $impliment_department->id == $project_tracking->department_id)
+                                                        <button type="button" data-bs-target="#responsive-modal-contract_budget" data-bs-toggle="modal"
+                                                        class="btn btn-info text-white"><i class="fas fa-dollar-sign"></i>افزودن بودیجه قرار داد شده</button>
+
+                                                @endif
+                                            @endforeach
+                                        @endforeach
+                                    @endcan
                                     </div>
                                 </div>
-
                             </li>
                         @endforeach
                     @endif
@@ -265,11 +248,217 @@
             </div>
         </div>
     </div>
-
 </div>
 
-</div>
 
+<!-- start send modal content -->
+<div id="responsive-modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">ارسال پروژه به بخش بعدی</h4>
+                <button type="submit" class="btn-close" data-bs-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('project_tracking.update', $project->id ) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('put')
+
+                    <div class="form-group">
+
+                        <div class="card-header bg-info">
+                            <h4 class="m-b-0 text-white">ارسال پروژه به :
+
+                                @if ($level == 1 )
+
+                                    @foreach($project->design_departments as $design_department)
+                                        {{ $design_department->name_da }}
+                                        <input name="department_id" value="{{ $design_department->id }}" type="hidden">
+                                    @endforeach
+
+                                @elseif ($level == 2)
+                                    @foreach($project->impliment_departments as $impliment_department)
+                                        @if (
+                                               $impliment_department->name_da == 'سکتور خصوصی'
+                                            or $impliment_department->name_da == 'سکتور_خصوصی'
+                                            or $impliment_department->name_da == 'سکتورخصوصی'
+                                            or $impliment_department->name_en == 'Private Sector'
+                                            or $impliment_department->name_en == 'Private_Sector'
+                                            or $impliment_department->name_en == 'private sector'
+                                            or $impliment_department->name_en == 'private_sector'
+                                            )
+                                            <?php
+                                            $rocurement_department = App\Models\Plan\Depratment::where('name_da','LIKE','%تدارکات%')->first();
+
+                                            ?>
+
+                                            {{ $rocurement_department->name_da }}
+                                            <input name="department_id" value="{{ $rocurement_department->id }}" type="hidden">
+                                        @else
+
+                                            {{ $impliment_department->name_da }}
+                                            <input name="department_id" value="{{ $impliment_department->id }}" type="hidden"
+                                        @endif
+                                    @endforeach
+                                @elseif ($level == 3)
+                                    @foreach($project->management_departments as $management_department)
+                                        {{ $management_department->name_da }}
+                                        <input name="department_id" value="{{ $management_department->id }}" type="hidden">
+                                    @endforeach
+                                @endif
+                            </h4>
+                        </div>
+
+                        {{-- </select> --}}
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-label">فایل*</label>
+                        <input name="file" type="file" class="form-control" id="recipient-name">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-label">تاریخ ارسال*</label>
+                        {{-- <input type="text" id="date2"> --}}
+                        <input name="date_of_send" id="date2"  type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="form-label">توضیحات*</label>
+                        <textarea name="description" rows="5" class="form-control" id="message-text"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-bs-dismiss="modal">لغو</button>
+                    <button type="submit" class="btn btn-success text-white"> <i class="far fa-share-square"></i>
+                                ارسال</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- end send modal content -->
+
+
+@can('add_budget_after_design')
+<!-- start send modal content budget after design -->
+<div id="responsive-modal-budgets" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">بودیجه بعد از دیزاین</h4>
+                <button type="submit" class="btn-close" data-bs-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('budget_after_design.add_budget_after_design', $project->id ) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PATCH')
+
+                    <div class="form-group">
+
+                        <div class="card-header bg-info">
+                            <?php $budget_after_design = 0 ?>
+                            @foreach ($project->budgets as $budget )
+
+
+                                <h4 class="m-b-0 text-white">
+                                    تعهد بودجوی : {{ number_format($budget->main_budget) }}
+                                </h4>
+                                <hr>
+                                <h4 class="m-b-0 text-white">
+                                    بودیجه برای سال {{  jdate($budget->year)->format('Y') }} : {{ number_format($budget->for_this_year) }}
+                                </h4>
+                                @if (!$budget->budget_after_design == 0)
+                                <hr>
+                                <h4 class="m-b-0 text-white">
+                                    بودیجه بعد از دیزاین : {{ number_format($budget->budget_after_design) }}
+                                </h4>
+                                @endif
+                                <?php $budget_after_design = $budget->budget_after_design ?>
+                            @endforeach
+                        </div>
+
+                        {{-- </select> --}}
+                    </div>
+                    @if ($budget_after_design == 0)
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-label">دویجه*</label>
+                        <input name="budget_after_design" value="{{ $budget_after_design }}" id="date2"  type="number" class="form-control">
+                    </div>
+                    <div class="modal-footer">
+                    <button type="submit" class="btn btn-success text-white"> <i class="far fa-share-square"></i>
+                                ذخیر معلومات</button>
+                    </div>
+                    @endif
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- end send modal content budget after design  -->
+@endcan
+
+@can('add_contract_budget')
+<!-- start send modal content budget after design -->
+<div id="responsive-modal-contract_budget" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">بودیجه بعد از قرار داد </h4>
+                <button type="submit" class="btn-close" data-bs-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('contract_budget.add_contract_budget', $project->id ) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PATCH')
+
+                    <div class="form-group">
+
+                        <div class="card-header bg-info">
+                           <?php $contract_budget = 0 ?>
+                            @foreach ($project->budgets as $budget )
+
+
+                                <h4 class="m-b-0 text-white">
+                                    تعهد بودجوی : {{ number_format($budget->main_budget) }}
+                                </h4>
+                                <hr>
+                                <h4 class="m-b-0 text-white">
+                                      بودیجه برای سال {{  jdate($budget->year)->format('Y') }} : {{ number_format($budget->for_this_year) }}
+                                </h4>
+                                <hr>
+                                <h4 class="m-b-0 text-white">
+                                    بودیجه بعد از دیزاین : {{ number_format($budget->budget_after_design) }}
+                                </h4>
+                                <hr>
+                                <h4 class="m-b-0 text-white">
+                                    بودیجه قرار داد شده : {{ number_format($budget->contract_budget) }}
+                                </h4>
+                                <?php $contract_budget = $budget->contract_budget ?>
+                            @endforeach
+                        </div>
+
+                        {{-- </select> --}}
+                    </div>
+                    @if ($contract_budget == 0)
+                    <div class="form-group">
+                        <label for="recipient-name" class="form-label">دویجه*</label>
+                        <input name="contract_budget" value="{{ $contract_budget }}" id="date2"  type="number" class="form-control">
+                    </div>
+
+                    <div class="modal-footer">
+                    <button type="submit" class="btn btn-success text-white"> <i class="far fa-share-square"></i>
+                                ذخیر معلومات</button>
+                    </div>
+                    @endif
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- end send modal content budget after design  -->
+
+@endcan
 @endsection
 @section('script')
 <script src="{{ asset('assets/node_modules/horizontal-timeline/js/horizontal-timeline.js') }}"></script>

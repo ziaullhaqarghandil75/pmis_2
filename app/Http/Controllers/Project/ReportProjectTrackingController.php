@@ -32,7 +32,7 @@ class ReportProjectTrackingController extends Controller
      */
     public function store(Request $request)
     {
-        if(!(Auth::user()->can('add_project') and Auth::user()->can('projects'))){
+        if(!(Auth::user()->can('add_project_tracking'))){
             return view('layouts.403');
         }
         $request->validate([

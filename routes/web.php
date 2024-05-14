@@ -67,6 +67,9 @@ Route::middleware('auth')->group(function () {
     //  start project settings
     Route::resource('/project', ProjectController::class);
     Route::resource('/project_tracking', ProjectTrackingController::class);
+    Route::patch('/budget_after_design/{id}', [ProjectTrackingController::class,'add_budget_after_design'])->name('budget_after_design.add_budget_after_design');
+    Route::patch('/contract_budget/{id}', [ProjectTrackingController::class,'add_contract_budget'])->name('contract_budget.add_contract_budget');
+
     Route::post('/report_project_tracking', [ReportProjectTrackingController::class, 'store'])->name('report_project_tracking.store');
     Route::get('/report_project_tracking/{id}/department_id/{department_id}/project_tracking_id/{project_tracking_id}', [ReportProjectTrackingController::class, 'show'])->name('report_project_tracking.show');
     Route::resource('/department_activity', DepartmentActivityController::class);

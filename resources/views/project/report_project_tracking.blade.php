@@ -2,8 +2,8 @@
 
 @section('style')
 
-<link href="{{ asset('assets/node_modules/footable/css/footable.bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('dist/css/pages/footable-page.css') }}" rel="stylesheet" type="text/css" />
+{{-- <link href="{{ asset('assets/node_modules/footable/css/footable.bootstrap.min.css') }}" rel="stylesheet" type="text/css" /> --}}
+{{-- <link href="{{ asset('dist/css/pages/footable-page.css') }}" rel="stylesheet" type="text/css" /> --}}
 
 @endsection
 
@@ -157,50 +157,39 @@
             @endif
         </div>
         <!-- Accordian -->
-        <div class="accordion" id="accordionTable">
-            <div class="card m-b-5">
-                <div id="col1" class="collapse show" aria-labelledby="heading1" data-parent="#accordionTable">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="demo-foo-accordion" class="table table-bordered m-b-0 toggle-arrow-tiny" data-filtering="true" data-paging="true" data-sorting="true">
-                                <thead>
-                                    <tr class="footable-filtering">
-                                        <th data-bs-toggle="true"> #</th>
-                                        <th data-hide="all"> اسم فعالیت </th>
-                                        <th data-hide="all"> توضیحات </th>
-                                        <th data-hide="all"> فیصدی </th>
-                                        <th data-hide="all"> تاریخ </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($reports as  $report)
-                                        <tr>
+        <table id="config-table" class="table display table-striped border no-wrap">
+            <thead>
+                <tr class="footable-filtering">
+                    <th data-bs-toggle="true"> #</th>
+                    <th data-hide="all"> اسم فعالیت </th>
+                    <th data-hide="all"> توضیحات </th>
+                    <th data-hide="all"> فیصدی </th>
+                    <th data-hide="all"> تاریخ </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($reports as  $report)
+                    <tr>
 
-                                            <td>{{ $sort_department++ }}</td>
-                                            <td>@foreach($report->department_activities  as $department_activity) {{ $department_activity->acitvity_name }} @endforeach</td>
-                                            <td>{{ $report->description }}</td>
-                                            <td>
-                                                @foreach($report->department_activities  as $department_activity)
-                                                   {{ $department_activity->acitvity_percentage }}%
-                                                @endforeach
-                                            </td>
-                                            <td>{{ jdate($report->created_at)->format('l - d / m / Y')  }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                            <table>
-                                <td  class="label-info" >مجموع فصیدی تکیمیل شده : {{ $total_percentage  }}</td>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        <td>{{ $sort_department++ }}</td>
+                        <td>@foreach($report->department_activities  as $department_activity) {{ $department_activity->acitvity_name }} @endforeach</td>
+                        <td>{{ $report->description }}</td>
+                        <td>
+                            @foreach($report->department_activities  as $department_activity)
+                               {{ $department_activity->acitvity_percentage }}%
+                            @endforeach
+                        </td>
+                        <td>{{ jdate($report->created_at)->format('l - d / m / Y')  }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+        <table>
+            <td  class="label-info" >مجموع فصیدی تکیمیل شده : {{ $total_percentage  }}</td>
+        </table>
     </div>
 </div>
 <!-- end lsit project report -->
-
 
 <!-- start send modal content -->
 <div id="send-report-modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
@@ -248,8 +237,8 @@
 @endsection
 @section('script')
 
-<script src="{{ asset('assets/node_modules/footable/js/footable.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('dist/js/pages/footable-init.js') }}" type="text/javascript"></script>
+{{-- <script src="{{ asset('assets/node_modules/footable/js/footable.min.js') }}" type="text/javascript"></script> --}}
+{{-- <script src="{{ asset('dist/js/pages/footable-init.js') }}" type="text/javascript"></script> --}}
 <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/momentjs/latest/moment-jalaali.min.js"></script>
 
@@ -258,5 +247,47 @@
     var shamsiDate = moment().format('jYYYY/jM/jD');
     document.getElementById('shamsi-date').innerHTML = shamsiDate;
 </script>
-
+<script>
+    $(function() {
+        $('#myTable').DataTable();
+        var table = $('#example').DataTable({
+            "columnDefs": [{
+                "visible": false,
+                "targets": 2
+            }],
+            "order": [
+                [2, 'asc']
+            ],
+            "displayLength": 25,
+            "drawCallback": function(settings) {
+                var api = this.api();
+                var rows = api.rows({
+                    page: 'current'
+                }).nodes();
+                var last = null;
+                api.column(2, {
+                    page: 'current'
+                }).data().each(function(group, i) {
+                    if (last !== group) {
+                        $(rows).eq(i).before('<tr class="group"><td colspan="5">' + group + '</td></tr>');
+                        last = group;
+                    }
+                });
+            }
+        });
+        // Order by the grouping
+        $('#example tbody').on('click', 'tr.group', function() {
+            var currentOrder = table.order()[0];
+            if (currentOrder[0] === 2 && currentOrder[1] === 'asc') {
+                table.order([2, 'desc']).draw();
+            } else {
+                table.order([2, 'asc']).draw();
+            }
+        });
+        // responsive table
+        $('#config-table').DataTable({
+            responsive: true
+        });
+    });
+</script>
 @endsection

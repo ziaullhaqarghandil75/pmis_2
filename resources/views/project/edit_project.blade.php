@@ -97,8 +97,6 @@
                                 <label class="control-label col-md-2">انتخاب واحد*</label>
                                 <div class="col-md-9">
                                     <select name="unit_id" class="select2 form-control form-select select2-hidden-accessible" style="width: 100%" data-select2-id="1" tabindex="-1" aria-hidden="true">
-                                        <option value="0" data-select2-id="1">انتخاب واحد</option>
-                                        <!-- <optgroup label="Alaskan/Hawaiian Time Zone" data-select2-id="13"> -->
                                         @foreach($units as $unit)
                                         <option value="{{ $unit->id }}" {{ ($project->unit_id == $unit->id) ? 'selected':'' }} >{{ $unit->unit_name_fa }}</option>
                                         @endforeach
@@ -112,10 +110,10 @@
                                 <label class="control-label col-md-2">تطبیق کننده*</label>
                                 <div class="col-md-8">
                                     <select name="impliment_department_id" class="select2 form-control form-select select2-hidden-accessible" style="width: 100%" data-select2-id="3" tabindex="-1" aria-hidden="true">
-                                        <option value="0" data-select2-id="3">انتخاب تطبیق کننده</option>
-                                        <!-- <optgroup label="Alaskan/Hawaiian Time Zone" data-select2-id="13"> -->
                                         @foreach($depratments as $department)
-                                        <option value="{{ $department->id }}" {{ ($project->impliment_department_id == $department->id) ? 'selected':'' }} >{{ $department->name_da }}</option>
+                                            @if ($department->type_of_department == 1)
+                                                <option value="{{ $department->id }}" {{ ($project->impliment_department_id == $department->id) ? 'selected':'' }} >{{ $department->name_da }}</option>
+                                            @endif
                                         @endforeach
                                         <!-- </optgroup>  -->
                                     </select>
@@ -127,10 +125,10 @@
                                 <label class="control-label col-md-2">مدیریت کننده*</label>
                                 <div class="col-md-9">
                                     <select name="management_department_id" class="select2 form-control form-select select2-hidden-accessible" style="width: 100%" data-select2-id="4" tabindex="-1" aria-hidden="true">
-                                        <option data-select2-id="4">انتخاب مدیریت کننده</option>
-                                        <!-- <optgroup label="Alaskan/Hawaiian Time Zone" data-select2-id="13"> -->
                                         @foreach($depratments as $depratment)
-                                        <option value="{{ $depratment->id }}" {{ ($project->management_department_id == $depratment->id) ? 'selected':'' }}>{{ $depratment->name_da }}</option>
+                                            @if ($depratment->type_of_department == 2)
+                                                <option value="{{ $depratment->id }}" {{ ($project->management_department_id == $depratment->id) ? 'selected':'' }}>{{ $depratment->name_da }}</option>
+                                            @endif
                                         @endforeach
                                         <!-- </optgroup>  -->
                                     </select>
@@ -142,10 +140,10 @@
                                 <label class="control-label col-md-2">دیزاین کننده*</label>
                                 <div class="col-md-8">
                                     <select name="design_department_id" class="select2 form-control form-select select2-hidden-accessible" style="width: 100%" data-select2-id="5" tabindex="-1" aria-hidden="true">
-                                        <option data-select2-id="5">انتخاب دیزاین کننده</option>
-                                        <!-- <optgroup label="Alaskan/Hawaiian Time Zone" data-select2-id="13"> -->
                                         @foreach($depratments as $depratment)
-                                        <option value="{{ $depratment->id }}" {{ ($project->design_department_id == $depratment->id) ? 'selected':'' }} >{{ $depratment->name_da }}</option>
+                                            @if ($depratment->type_of_department == 3)
+                                                <option value="{{ $depratment->id }}" {{ ($project->design_department_id == $depratment->id) ? 'selected':'' }} >{{ $depratment->name_da }}</option>
+                                            @endif
                                         @endforeach
                                         <!-- </optgroup>  -->
                                     </select>

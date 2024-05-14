@@ -29,7 +29,7 @@ class ProjectController extends Controller
 
         if((auth::user()->can('show_all_projects'))){
             $project_trackings = false;
-            $projects = Project::with('goals','units','impliment_departments','management_departments','design_departments')->orderByDesc('id')->get();
+            $projects = Project::with('budgets','goals','units','impliment_departments','management_departments','design_departments')->orderByDesc('id')->get();
         }else{
 
             $project_trackings = ProjectTracking::with('project_projcts','project_departments')->where('department_id','=',auth::user()->department_id)->orderByDesc('id')->get();
@@ -74,7 +74,7 @@ class ProjectController extends Controller
             'management_department_id'  => 'required|exists:departments,id',
             'design_department_id'      => 'required|exists:departments,id',
             'district_id'               => 'required|exists:districts,id',
-            'main_budget'               => 'required|numeric',
+            'main_budget'               => 'required|numeric|gte:for_this_year',
             'for_this_year'             => 'required|numeric|lte:main_budget',
         ]);
         // dd($request->all());
@@ -83,7 +83,7 @@ class ProjectController extends Controller
         $project = new Project();
         $project->goal_id                      = $request->goal_id;
         $project->name                         = $request->name;
-        $project->length                       = $request->length;
+        $project->length                       = $request->length_p;
         $project->width                        = $request->width;
         $project->number                       = $request->number;
         $project->unit_id                      = $request->unit_id ;
@@ -96,7 +96,7 @@ class ProjectController extends Controller
 
         $budget = new budgets();
         $budget->project_id         = $project->id;
-        $budget->department_id      = auth()->user()->department_id;
+        // $budget->department_id      = auth()->user()->department_id;
         $budget->year               = Carbon::now()->format('Y');
         $budget->main_budget        = $request->main_budget;
         $budget->for_this_year      = $request->for_this_year;
@@ -153,8 +153,8 @@ class ProjectController extends Controller
             'management_department_id'  => 'required|exists:departments,id',
             'design_department_id'      => 'required|exists:departments,id',
             'district_id'               => 'required|exists:districts,id',
-            'main_budget'               => 'required|numeric',
-            'for_this_year'             => 'required|numeric|lte:main_budget',
+            'main_budget'               => 'required|numeric|gte:for_this_year', # for_this_year بییشتر یا مساوی با
+            'for_this_year'             => 'required|numeric|lte:main_budget',   # main_budget کمتر یا مساوی با
         ]);
 
         $update = Project::find($id);
@@ -173,7 +173,7 @@ class ProjectController extends Controller
 
         $update->districts()->sync($request->input('district_id'));
 
-        $budget = budgets::where('project_id','=',$id)->where('department_id','=',auth()->user()->department_id)->first();
+        $budget = budgets::where('project_id','=',$id)->first();
         $budget->update([
             'main_budget' => $request->main_budget,
             'for_this_year' => $request->for_this_year,

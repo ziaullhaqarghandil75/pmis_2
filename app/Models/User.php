@@ -54,8 +54,9 @@ class User extends Authenticatable
     }
     public function departments()
     {
-        return $this->hasMany(Depratment::class,'id');
+        return $this->hasMany(Depratment::class,'id','department_id');
     }
+
     public function hasRole($role){
 
         if(is_string($role)) {
@@ -67,9 +68,9 @@ class User extends Authenticatable
 //                return true;
 //            }
 //        }
-//        return false; 
+//        return false;
 
         return !! $role->intersect($this->roles)->count();
     }
-    
+
 }
