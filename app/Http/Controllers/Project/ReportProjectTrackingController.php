@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Project\DepartmentActivity;
 use App\Models\Project\Project;
 use App\Models\Project\ReportProjectTracking;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -48,10 +49,23 @@ class ReportProjectTrackingController extends Controller
         $project->department_id     = $request->department_id;
         $project->project_tracking_id     = $request->project_tracking_id;
         $project->description       = $request->description;
-        $project->percentage        = $request->percentage;
+        // $project->percentage        = $request->percentage;
         $project->department_activity_id        = $request->department_activity_id;
 
         $project->save();
+
+        // $reject_activity = ReportProjectTracking::find($request->report_project_tracking_id);
+
+        // $reject_activity->update(['reject_comment_activity' => $request->reject_comment_activity]);
+
+        $update_number_reject_activity = $project->find($request->department_activity_for_add);
+        if($update_number_reject_activity != null){
+
+            // dd($update_number_reject_activity);
+            $update_number_reject_activity->update([
+                'number'=> 1,
+            ]);
+        }
 
         return redirect()->back()->with('success', 'گزارش شما ارسال گردید.');
     }
@@ -62,22 +76,28 @@ class ReportProjectTrackingController extends Controller
     public function show(string $id, string $department_id,string $project_tracking_id)
     {
         $project = Project::with('goals','units','impliment_departments','management_departments','design_departments')->find($id);
-        $reports = ReportProjectTracking::with('department_reprot','department_activities')->where('project_id','=',$id)->where('department_id','=',$department_id)->get();
+        $reports = ReportProjectTracking::with('department_reprot','department_activities')
+                                        ->where('project_id','=',$id)
+                                        ->where('department_id','=',$department_id)->get();
 
+        $department_activity_for_add = ReportProjectTracking::with('department_reprot','department_activities')
+                                        ->where('project_id','=',$id)
+                                        ->where('department_id','=',$department_id)
+                                        ->where('reject_activity','!=',null)
+                                        ->where('number','=',0)->first();
 
+        // dd($department_activity_for_add);
         $total_percentage = ReportProjectTracking::where('report_project_tracking.project_id', $id)
         ->where('report_project_tracking.department_id', $department_id)
+        ->where('report_project_tracking.reject_activity', null)
         ->join('department_activities', 'department_activities.id', '=', 'report_project_tracking.department_activity_id')
         ->sum('department_activities.acitvity_percentage');
-
-        $department_activity_for_add = DepartmentActivity::where('department_id','=',$department_id)
-                                                    ->where('status','=','1')->get();
 
         $department_activities = DepartmentActivity::where('department_id','=',$department_id)
                                                     ->where('status','=','1')
                                                     ->orderBy('sort_of_activity','asc')->get();
 
-        return view('project.report_project_tracking', compact('project','reports','department_id','id','total_percentage','project_tracking_id','department_activities'));
+        return view('project.report_project_tracking', compact('project','reports','department_id','id','total_percentage','project_tracking_id','department_activities','department_activity_for_add'));
 
     }
 
@@ -103,6 +123,28 @@ class ReportProjectTrackingController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function reject_activity(Request $request)
+    {
+            $request->validate([
+                'reject_comment_activity' => ['required'],
+                'report_project_tracking_id' => ['required','exists:report_project_tracking,id'],
+                // 'number' => 1+1,
+            ]);
+
+            $reject_activity = ReportProjectTracking::find($request->report_project_tracking_id);
+
+            $reject_activity->update(['reject_comment_activity' => $request->reject_comment_activity]);
+
+            $reject_activity->where('project_id','=',$reject_activity->project_id)
+                            ->where('project_tracking_id','=',$reject_activity->project_tracking_id)
+                            ->where('id','>=',$reject_activity->id)
+                            ->update([
+                                'reject_activity'=> Carbon::now(),
+                            ]);
+
+        return redirect()->back()->with('success', 'فعالیت شما رد شد');
     }
 
 }

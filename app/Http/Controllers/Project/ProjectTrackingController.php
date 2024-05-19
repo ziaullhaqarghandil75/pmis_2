@@ -74,17 +74,12 @@ class ProjectTrackingController extends Controller
             return view('layouts.403');
         }
 
-
-        // if($request->department_id == '0'){
-        //     return redirect()->route('project_tracking.show',$id)->with('warning', 'لطفا دیپارتمنت را انتخاب نماید.');
-        // }
-
         $date = Carbon::now();
 
         $project = Project::select('name','design_department_id')->find($id);
 
         $ProjectTracking = new ProjectTracking();
-        // start check for percentage
+        // start check for percentage and budget
         $current_department_id = $ProjectTracking->where('project_id','=',$id)->orderByDesc('id')->first();
 
 
@@ -92,6 +87,7 @@ class ProjectTrackingController extends Controller
 
             $current_department_percentage = ReportProjectTracking::where('report_project_tracking.project_id', $id)
             ->where('report_project_tracking.department_id', $current_department_id->department_id)
+            ->where('report_project_tracking.reject_activity', null)
             ->join('department_activities', 'department_activities.id', '=', 'report_project_tracking.department_activity_id')
             ->sum('department_activities.acitvity_percentage');
 
@@ -101,28 +97,33 @@ class ProjectTrackingController extends Controller
             }
 
             if($project->design_department_id == $current_department_id->department_id ){
+
                 $budget = Budgets::where('project_id','=',$id)->first();
                 if($budget->budget_after_design == 0 or $budget->budget_after_design == null){
                     return redirect()->back()->with('warning', 'لطفا بودیجه بعد از دیزاین را اضافه نماید .');
 
                 }
             }
-        }
-        // dd($project->design_department_id == $current_department_id->department_id);
+            $current_department_for_Check_contract_budget = $current_department_id->project_departments()->first();
 
-        // end check for percentage
+            if(    $current_department_for_Check_contract_budget->name_da == 'ریاست تدارکات'
+                or $current_department_for_Check_contract_budget->name_da == 'تدارکات'
+                or $current_department_for_Check_contract_budget->name_da == 'ریاست_تدارکات'
+            ){
+                $budget = Budgets::where('project_id','=',$id)->first();
+                if($budget->contract_budget == 0 or $budget->contract_budget == null){
+                    return redirect()->back()->with('warning', 'لطفا بودیجه قرار داد شده را اضافه نماید .');
+                }
+            }
+        }
+
+        // end check for percentage and budget
 
             $request->validate([
                 'file' => ['required','mimes:pdf,PDF'],
                 'description' => ['required'],
                 'department_id' => ['required'],
             ]);
-
-            //  check select dpartment
-            // if($request->department_id == '0'){
-            //     return redirect()->route('project_tracking.show',$id)->with('warning', 'لطفا دیپارتمنت را انتخاب نماید.');
-            // }
-
 
             if ($request->hasFile('file')) {
                 $file = $request->file('file');

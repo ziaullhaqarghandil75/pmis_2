@@ -165,21 +165,37 @@
                     <th data-hide="all"> توضیحات </th>
                     <th data-hide="all"> فیصدی </th>
                     <th data-hide="all"> تاریخ </th>
+                    <th data-hide="all"> ردکردن فعالیت </th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($reports as  $report)
+                @foreach($reports as  $key => $report)
                     <tr>
-
-                        <td>{{ $sort_department++ }}</td>
-                        <td>@foreach($report->department_activities  as $department_activity) {{ $department_activity->acitvity_name }} @endforeach</td>
+                        <td>{{ $key+1 }}</td>
+                        <td>
+                            @foreach($report->department_activities  as $department_activity) {{ $department_activity->acitvity_name }} @endforeach
+                        </td>
                         <td>{{ $report->description }}</td>
                         <td>
-                            @foreach($report->department_activities  as $department_activity)
+                          <?php
+                           $department_activity = $report->department_activities->first();
+
+                            // $sort_department =  $department_activity->sort_department;
+                          ?>
                                {{ $department_activity->acitvity_percentage }}%
-                            @endforeach
                         </td>
                         <td>{{ jdate($report->created_at)->format('l - d / m / Y')  }}</td>
+                        <td>
+                            @if ($report->reject_activity == null)
+
+                                <button type="submit" data-bs-target="#reject_activity" data-bs-toggle="modal" class="btn btn-danger text-white" onclick="setRejectActivityId({{$report->id}})">
+                                    <i class="fas fa-trash-alt"></i> رد گزارش
+                                </button>
+                                <?php $sort_department += 1 ?>
+                            @else
+                               <p>{{$report->reject_comment_activity}}</p>
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
@@ -190,7 +206,9 @@
     </div>
 </div>
 <!-- end lsit project report -->
-
+{{-- @foreach ($department_activities as $department_activity )
+@dd($department_activity->id == '15')
+@endforeach --}}
 <!-- start send modal content -->
 <div id="send-report-modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
@@ -209,12 +227,27 @@
                         <input name="project_tracking_id" type="hidden" value="{{ $project_tracking_id }}">
                     </div>
                     <div class="form-group">
+                         <?php $lable = 'info' ?>
                         @foreach ($department_activities as $department_activity)
-                            @if ($department_activity->sort_of_activity == $sort_department)
-                                    <input name="department_activity_id" type="hidden" value="{{ $department_activity->id }}">
-                                    <div class="col-12 label label-table label-info"><h4>ارسال گزارش فعالیت: {{ $department_activity->acitvity_name }}</h4></div>
-                            @endif
+                            <div class="col-12 label label-table label-{{$lable}}"><h4>ارسال گزارش فعالیت: {{ $department_activity->acitvity_name }}</h4></div>
+
+                                @if ($department_activity_for_add != null)
+                                    @if ($department_activity->id == $department_activity_for_add->department_activity_id and $department_activity_for_add->number == 0  )
+                                        <input name="department_activity_id" type="hidden" value="{{ $department_activity->id }}">
+                                        <input name="department_activity_for_add" type="hidden" value="{{ $department_activity_for_add->id }}">
+                                        <?php $lable = 'danger' ?>
+                                        {{-- <div class="col-12 label label-table label-info"><h4>ارسال گزارش فعالیت: {{ $department_activity->acitvity_name }}</h4></div> --}}
+                                    @endif
+                                @else
+                                    @if ($department_activity->sort_of_activity == $sort_department)
+                                        <input name="department_activity_id" type="hidden" value="{{ $department_activity->id }}">
+                                        <?php $lable = 'danger' ?>
+                                        {{-- <div class="col-12 label label-table label-info"><h4>ارسال گزارش فعالیت: {{ $department_activity->acitvity_name }}</h4></div> --}}
+                                    @endif
+                                @endif
                         @endforeach
+
+
                     </div>
                     <div class="form-group">
                         <label for="message-text" class="form-label">توضیحات*</label>
@@ -232,18 +265,47 @@
     </div>
 </div>
 <!-- end send modal content -->
+{{-- @dd($sort_department) --}}
+<!-- start reject activity  -->
+<div id="reject_activity" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"> ارسال گزارش ردکردن فعالیت</h4>
+                <button type="submit" class="btn-close" data-bs-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('reject_activity_reported.reject_activity') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('patch')
 
+                    <div class="form-group">
+                        <input name="report_project_tracking_id" type="hidden" id="reject_activity_id_1">
+
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="form-label">توضیحات*</label>
+                        <textarea name="reject_comment_activity" rows="5" class="form-control" id="message-text"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                    {{-- <button type="button" class="btn btn-default waves-effect" data-bs-dismiss="modal">لغو</button> --}}
+                    <button type="submit" class="btn btn-success text-white"> <i class="far fa-share-square"></i>
+                                ارسال</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- end reject activity -->
 
 @endsection
 @section('script')
-
-{{-- <script src="{{ asset('assets/node_modules/footable/js/footable.min.js') }}" type="text/javascript"></script> --}}
-{{-- <script src="{{ asset('dist/js/pages/footable-init.js') }}" type="text/javascript"></script> --}}
 <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/momentjs/latest/moment-jalaali.min.js"></script>
 
 <script>
-    // تنظیم تاریخ به تاریخ جاری هجری شمسی
     var shamsiDate = moment().format('jYYYY/jM/jD');
     document.getElementById('shamsi-date').innerHTML = shamsiDate;
 </script>
@@ -289,5 +351,14 @@
             responsive: true
         });
     });
+</script>
+
+<script>
+    function setRejectActivityId(id) {
+         const inputElement = document.getElementById('reject_activity_id_1');
+
+         inputElement.value = id;
+     }
+
 </script>
 @endsection

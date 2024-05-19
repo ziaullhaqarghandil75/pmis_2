@@ -64,12 +64,20 @@ class DepartmentActivityController extends Controller
 
         }
 
+        $national_procurement = Depratment::where('name_da','like','%ملی%')->where('status','=','1')->orWhere('name_da','=','تدارکات')->first();
+        // dd($national_procurement->id);
+
         $departmentd_ctivity->acitvity_name          = $request->acitvity_name;
         $departmentd_ctivity->acitvity_deys          = $request->acitvity_deys;
         $departmentd_ctivity->acitvity_percentage    = $request->acitvity_percentage;
+        if($national_procurement->id == $request->department_id){
+            // dd('sdf');
+            $departmentd_ctivity->type_of_department_activity = '1';
+        }
         $departmentd_ctivity->department_id          = $request->department_id;
         $departmentd_ctivity->status                 = $request->status;
         $departmentd_ctivity->sort_of_activity       = $request->sort_of_activity;
+
         $departmentd_ctivity->save();
 
         return redirect()->back()->with('success', 'فعالیت شما اضافه گریدید.');

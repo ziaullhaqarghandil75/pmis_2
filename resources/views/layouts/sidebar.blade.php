@@ -50,6 +50,18 @@
                         </ul>
                     <li>
                 @endcan
+                @can('setting_programs_setting')
+                <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="icon-notebook"></i><span class="hide-menu">تنظیمات تنظیم برنامه ها</span></a>
+                    <ul aria-expanded="false" class="collapse">
+                        @can('projects')
+                        <li><a href="{{ route('project.index') }}">پروژه ها</a></li>
+                        @endcan
+                        @can('department_activities')
+                        <li><a href="{{ route('department_activity.index') }}">فعالیت های دیپارتمنت</a></li>
+                        @endcan
+                    </ul>
+                <li>
+            @endcan
             </ul>
         </nav>
         <!-- End Sidebar navigation -->

@@ -66,7 +66,7 @@
                                                 $project_modes_p = 0;
                                                 $project_modes_p = App\Models\Project\ReportProjectTracking::where('report_project_tracking.project_id', $project_modes->project_id)
                                                                                                             ->where('report_project_tracking.department_id', $project_modes->department_id)
-                                                                                                            // ->where('report_project_tracking.id', $project_modes->id)
+                                                                                                            ->where('report_project_tracking.reject_activity', null)
                                                                                                             ->join('department_activities', 'department_activities.id', '=', 'report_project_tracking.department_activity_id')
                                                                                                             ->sum('department_activities.acitvity_percentage');
                                             ?>
@@ -120,7 +120,7 @@
 
                                                     $project_modes_p = App\Models\Project\ReportProjectTracking::where('report_project_tracking.project_id', $project_modes->project_id)
                                                                                                             ->where('report_project_tracking.department_id', $project_modes->department_id)
-                                                                                                            // ->where('report_project_tracking.id', $project_modes->id)
+                                                                                                            ->where('report_project_tracking.reject_activity', null)
                                                                                                             ->join('department_activities', 'department_activities.id', '=', 'report_project_tracking.department_activity_id')
                                                                                                             ->sum('department_activities.acitvity_percentage');
 

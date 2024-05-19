@@ -167,15 +167,14 @@
                         <div class="card-header bg-success">
                             <h4 class="m-b-0 text-white">بخش بودیجه</h4>
                         </div>
-                        @foreach ($project->budgets as $budget)
-                            @if (!$budget->main_budget == null)
-                                <div class=" card-body">
+                        <?php $budget =  $project->budgets->first() ?>
+                            <div class=" card-body">
                                     <div class="row">
                                         <div class="col-md-6 col-sm-6">
                                             <div class="form-group has-danger row">
                                                 <label class="control-label col-md-2">تعهد بودجوی* </label>
                                                 <div class="col-md-9">
-                                                    <input value="{{ $budget->main_budget }}" type="number" name="main_budget"
+                                                    <input value="{{ ($budget != null) ? $budget->main_budget : '' }}" type="number" name="main_budget"
                                                         class="@error('main_budget') is-invalid @enderror form-control" placeholder="">
                                                     @error('main_budget')
                                                     <p class="invalid-feedback">{{ $message }}</p>
@@ -187,7 +186,7 @@
                                             <div class="form-group has-danger row">
                                                 <label class="control-label col-md-2">بودجه اختصاصی برای این سال*</label>
                                                 <div class="col-md-9">
-                                                    <input value="{{ $budget->for_this_year }}" type="number" name="for_this_year"
+                                                    <input value="{{ ($budget != null) ? $budget->for_this_year : '' }}" type="number" name="for_this_year"
                                                         class="@error('for_this_year') is-invalid @enderror form-control" placeholder="">
                                                     @error('for_this_year')
                                                     <p class="invalid-feedback">{{ $message }}</p>
@@ -196,9 +195,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            @endif
-                        @endforeach
+                            </div>
                             <div class="form-actions">
                                 <div class="card-body">
                                     <button type="submit" class="btn btn-success text-white"> <i class="fa fa-check"></i>

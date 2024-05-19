@@ -170,6 +170,7 @@
                                 <?php
                                 $percentage = App\Models\Project\ReportProjectTracking::where('report_project_tracking.project_id', $project_tracking->project_id)
                                                                                          ->where('report_project_tracking.department_id', $project_tracking->department_id)
+                                                                                         ->where('report_project_tracking.reject_activity', null)
                                                                                          ->join('department_activities', 'department_activities.id', '=', 'report_project_tracking.department_activity_id')
                                                                                          ->sum('department_activities.acitvity_percentage');
                                 ?>
@@ -225,7 +226,7 @@
                                                 ?>
 
                                                 @if (
-                                                    ($impliment_department->name_da == 'سکتور خصوصی' or  $impliment_department->name_da == 'سکتور خصوصی')
+                                                    ($impliment_department->name_da == 'سکتور خصوصی' or  $impliment_department->name_da == 'سکتور_خصوصی')
                                                 and !$rocurement_department == null
                                                 and ($project_department->name_da == 'ریاست تدارکات' or $project_department->name_da == 'ریاست_تدارکات' or $project_department->name_da == 'تدارکات')
                                                 )
@@ -336,7 +337,7 @@
     </div>
 </div>
 <!-- end send modal content -->
-
+{{-- @dd(jdate('2024/5/19')) --}}
 
 @can('add_budget_after_design')
 <!-- start send modal content budget after design -->

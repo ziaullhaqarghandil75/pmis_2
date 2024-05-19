@@ -10,6 +10,7 @@ class ReportProjectTracking extends Model
 {
     use HasFactory;
     protected $table = 'report_project_tracking';
+    protected $guarded = [];
 
     public function department_reprot(){
         return $this->hasMany(Depratment::class,'id');

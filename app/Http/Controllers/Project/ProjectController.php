@@ -97,7 +97,7 @@ class ProjectController extends Controller
         $budget = new budgets();
         $budget->project_id         = $project->id;
         // $budget->department_id      = auth()->user()->department_id;
-        $budget->year               = Carbon::now()->format('Y');
+        $budget->year               = Carbon::now()->format('Y-m-d');
         $budget->main_budget        = $request->main_budget;
         $budget->for_this_year      = $request->for_this_year;
         $budget->save();
@@ -174,10 +174,20 @@ class ProjectController extends Controller
         $update->districts()->sync($request->input('district_id'));
 
         $budget = budgets::where('project_id','=',$id)->first();
-        $budget->update([
-            'main_budget' => $request->main_budget,
-            'for_this_year' => $request->for_this_year,
-        ]);
+
+        if(!$budget == null){
+            $budget->update([
+                'main_budget' => $request->main_budget,
+                'for_this_year' => $request->for_this_year,
+            ]);
+        }else{
+            $budget = new budgets();
+            $budget->project_id         = $id;
+            $budget->year               = Carbon::now()->format('Y-m-d');
+            $budget->main_budget        = $request->main_budget;
+            $budget->for_this_year      = $request->for_this_year;
+            $budget->save();
+        }
 
         return redirect()->route('project.index')->with('success', ' معلومات پروژه شما ویرایش شد.');
     }
