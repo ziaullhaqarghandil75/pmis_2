@@ -18,4 +18,8 @@ class ReportProjectTracking extends Model
     public function department_activities(){
         return $this->hasMany(DepartmentActivity::class,'id','department_activity_id');
     }
+    public function department()
+    {
+        return $this->belongsTo(Depratment::class);
+    }
 }

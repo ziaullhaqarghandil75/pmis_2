@@ -22,4 +22,8 @@ class ProjectTracking extends Model
     {
         return $this->belongsTo(ReportProjectTracking::class,'id','project_tracking_id');
     }
+    public function project_tracking_details()
+    {
+        return $this->hasMany(ReportProjectTracking::class,'project_tracking_id','id');
+    }
 }

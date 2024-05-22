@@ -11,6 +11,8 @@ use App\Models\Plan\Unit;
 use App\Models\Project\budgets;
 use App\Models\Project\Project;
 use App\Models\Project\ProjectTracking;
+use App\Models\Project\ReportProjectTracking;
+use App\Models\Project\YearBudget;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,12 +31,12 @@ class ProjectController extends Controller
 
         if((auth::user()->can('show_all_projects'))){
             $project_trackings = false;
-            $projects = Project::with('budgets','goals','units','impliment_departments','management_departments','design_departments')->orderByDesc('id')->get();
+            $projects = Project::with('budgets','goal_category','units','impliment_departments','management_departments','design_departments')->orderByDesc('id')->get();
         }else{
-
+            
             $project_trackings = ProjectTracking::with('project_projcts','project_departments')->where('department_id','=',auth::user()->department_id)->orderByDesc('id')->get();
-
-            $projects = Project::with('goals','units','impliment_departments','management_departments','design_departments')->orderByDesc('id')->get();
+            // dd($project_trackings);
+            $projects = Project::with('goal_category','units','impliment_departments','management_departments','design_departments')->orderByDesc('id')->get();
         }
         return view('project.project', compact('projects','project_trackings'));
     }
@@ -96,11 +98,15 @@ class ProjectController extends Controller
 
         $budget = new budgets();
         $budget->project_id         = $project->id;
-        // $budget->department_id      = auth()->user()->department_id;
-        $budget->year               = Carbon::now()->format('Y-m-d');
         $budget->main_budget        = $request->main_budget;
-        $budget->for_this_year      = $request->for_this_year;
         $budget->save();
+
+
+        $year_budget = new YearBudget();
+        $year_budget->budget_id        = $budget->id;
+        $year_budget->year             = Carbon::now()->format('Y-m-d');
+        $year_budget->this_year_budget = $request->for_this_year;
+        $year_budget->save();
 
         return redirect()->route('project.index')->with('success', 'پروژه جدید اضافه کردید.');
     }
@@ -110,7 +116,10 @@ class ProjectController extends Controller
      */
     public function show(string $id)
     {
-        $project = Project::with('goals','units','impliment_departments','management_departments','design_departments')->find($id);
+        $project = Project::with('goal_category.goals','units','impliment_departments','management_departments','design_departments','budgets.year_budgets','project_trackings.project_departments','project_trackings.project_tracking_details.department_activities')->find($id);
+
+        // $report_project_traccking = ProjectTracking::where('project')
+
         return view('project.details_project',compact('project'));
 
     }
@@ -178,15 +187,24 @@ class ProjectController extends Controller
         if(!$budget == null){
             $budget->update([
                 'main_budget' => $request->main_budget,
-                'for_this_year' => $request->for_this_year,
+            ]);
+            $year_budget = YearBudget::where('budget_id','=',$budget->id)->first();
+
+            $year_budget->update([
+                'this_year_budget' => $request->for_this_year,
             ]);
         }else{
             $budget = new budgets();
             $budget->project_id         = $id;
-            $budget->year               = Carbon::now()->format('Y-m-d');
             $budget->main_budget        = $request->main_budget;
-            $budget->for_this_year      = $request->for_this_year;
             $budget->save();
+
+
+            $year_budget = new YearBudget();
+            $year_budget->budget_id        = $budget->id;
+            $year_budget->year             = Carbon::now()->format('Y-m-d');
+            $year_budget->this_year_budget = $request->for_this_year;
+            $year_budget->save();
         }
 
         return redirect()->route('project.index')->with('success', ' معلومات پروژه شما ویرایش شد.');

@@ -210,7 +210,7 @@
                             <div class="form-group has-danger row">
                                 <label class="control-label col-md-2">بودجه اختصاصی برای این سال*</label>
                                 <div class="col-md-8">
-                                    <input type="for_this_year" value="{{ old('for_this_year') }}" name="for_this_year"
+                                    <input type="number" value="{{ old('for_this_year') }}" name="for_this_year"
                                         class="@error('for_this_year') is-invalid @enderror form-control" placeholder="">
                                     @error('for_this_year')
                                     <p class="invalid-feedback">{{ $message }}</p>
@@ -218,18 +218,7 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- <div class="col-md-6 col-sm-6">
-                            <div class="form-group has-danger row">
-                                <label class="control-label col-md-2">سال*</label>
-                                <div class="col-md-9">
-                                    <input type="number" name="year"
-                                        class="@error('year') is-invalid @enderror form-control" placeholder="">
-                                    @error('year')
-                                    <p class="invalid-feedback">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div> --}}
+
                         <div class="form-actions">
                             <div class="card-body">
                                 <button type="submit" class="btn btn-success text-white"> <i class="fa fa-check"></i>

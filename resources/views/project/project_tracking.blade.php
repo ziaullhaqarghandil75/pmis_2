@@ -201,18 +201,28 @@
 
                                                 <button type="button" data-bs-target="#responsive-modal" data-bs-toggle="modal"
                                                         class="btn btn-primary text-white"><i class="far fa-share-square"></i> ارسال پروژه</button>
+
+
                                             @else
                                                 @if($project_tracking->department_id == auth()->user()->department_id)
                                                     <button type="button" data-bs-target="#responsive-modal" data-bs-toggle="modal"
                                                         class="btn btn-primary text-white"><i class="far fa-share-square"></i> ارسال پروژه</button>
+
+                                                    <a href="{{ route('report_project_tracking.show',[$project->id,$project_tracking->department_id,$project_tracking->id]) }}"
+                                                            class="btn btn-info text-white"><i class="fas fa-info-circle"></i> گزارش</a>
                                                 @endif
                                             @endif
                                         @endif
-                                        <a href="{{ route('report_project_tracking.show',[$project->id,$project_tracking->department_id,$project_tracking->id]) }}"
+                                        @if((auth()->user()->can('all_tracking_departments')))
+                                            <a href="{{ route('report_project_tracking.show',[$project->id,$project_tracking->department_id,$project_tracking->id]) }}"
                                                 class="btn btn-info text-white"><i class="fas fa-info-circle"></i> گزارش</a>
+                                        @endif
                                         @can('add_budget_after_design')
                                             @foreach ($project->design_departments as $design_department)
                                                 @if($percentage == 100 and $design_department->id == $project_tracking->department_id)
+                                                    <button type="button" data-bs-target="#responsive-modal-budgets" data-bs-toggle="modal"
+                                                    class="btn btn-info text-white"><i class="fas fa-dollar-sign"></i> افزودن بودیجه بعد از دیزاین</button>
+                                                @elseif($percentage == 100 and $project_tracking->department_id == auth()->user()->department_id)
                                                     <button type="button" data-bs-target="#responsive-modal-budgets" data-bs-toggle="modal"
                                                     class="btn btn-info text-white"><i class="fas fa-dollar-sign"></i> افزودن بودیجه بعد از دیزاین</button>
                                                 @endif
@@ -352,36 +362,31 @@
                 <form action="{{ route('budget_after_design.add_budget_after_design', $project->id ) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PATCH')
-
                     <div class="form-group">
-
                         <div class="card-header bg-info">
                             <?php $budget_after_design = 0 ?>
-                            @foreach ($project->budgets as $budget )
-
-
                                 <h4 class="m-b-0 text-white">
-                                    تعهد بودجوی : {{ number_format($budget->main_budget) }}
+                                    تعهد بودجوی : {{ number_format($project->budgets()->first()->main_budget) }} افغانی
                                 </h4>
                                 <hr>
+                                @foreach ($project->budgets->year_budgets as $year_budget)
+                                    <h4 class="m-b-0 text-white">
+                                        بودیجه برای سال
+                                        {{ jdate($year_budget->year )->format('Y') }}
+                                        : {{ number_format($year_budget->this_year_budget) }} افغانی
+                                    </h4>
+                                    <hr>
+                                @endforeach
                                 <h4 class="m-b-0 text-white">
-                                    بودیجه برای سال {{  jdate($budget->year)->format('Y') }} : {{ number_format($budget->for_this_year) }}
+                                    بودیجه بعد از دیزاین :
+                                    {{ number_format($project->budgets()->first()->budget_after_design) }} افغانی
                                 </h4>
-                                @if (!$budget->budget_after_design == 0)
-                                <hr>
-                                <h4 class="m-b-0 text-white">
-                                    بودیجه بعد از دیزاین : {{ number_format($budget->budget_after_design) }}
-                                </h4>
-                                @endif
-                                <?php $budget_after_design = $budget->budget_after_design ?>
-                            @endforeach
+                                <?php $budget_after_design = $project->budgets()->first()->budget_after_design ?>
                         </div>
-
-                        {{-- </select> --}}
                     </div>
                     @if ($budget_after_design == 0)
                     <div class="form-group">
-                        <label for="recipient-name" class="form-label">دویجه*</label>
+                        <label for="recipient-name" class="form-label">بودیجه*</label>
                         <input name="budget_after_design" value="{{ $budget_after_design }}" id="date2"  type="number" class="form-control">
                     </div>
                     <div class="modal-footer">
@@ -411,39 +416,41 @@
                 <form action="{{ route('contract_budget.add_contract_budget', $project->id ) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PATCH')
-
                     <div class="form-group">
-
                         <div class="card-header bg-info">
                            <?php $contract_budget = 0 ?>
-                            @foreach ($project->budgets as $budget )
+                                <h4 class="m-b-0 text-white">
+                                    تعهد بودجوی : {{ number_format($project->budgets()->first()->main_budget) }} افغانی
 
-
+                                </h4>
+                                <hr>
+                                @foreach ($project->budgets->year_budgets as $year_budget)
+                                    <h4 class="m-b-0 text-white">
+                                        بودیجه برای سال
+                                        {{ jdate($year_budget->year )->format('Y') }}
+                                        : {{ number_format($year_budget->this_year_budget) }} افغانی
+                                    </h4>
+                                    <hr>
+                                @endforeach
                                 <h4 class="m-b-0 text-white">
-                                    تعهد بودجوی : {{ number_format($budget->main_budget) }}
+                                    بودیجه بعد از دیزاین :
+                                    {{ number_format($project->budgets()->first()->budget_after_design) }} افغانی
                                 </h4>
                                 <hr>
                                 <h4 class="m-b-0 text-white">
-                                      بودیجه برای سال {{  jdate($budget->year)->format('Y') }} : {{ number_format($budget->for_this_year) }}
+                                    بودیجه قرار داد شده :
+                                    {{ number_format($project->budgets()->first()->contract_budget) }} افغانی
                                 </h4>
-                                <hr>
-                                <h4 class="m-b-0 text-white">
-                                    بودیجه بعد از دیزاین : {{ number_format($budget->budget_after_design) }}
-                                </h4>
-                                <hr>
-                                <h4 class="m-b-0 text-white">
-                                    بودیجه قرار داد شده : {{ number_format($budget->contract_budget) }}
-                                </h4>
-                                <?php $contract_budget = $budget->contract_budget ?>
-                            @endforeach
+                                <?php $contract_budget = $project->budgets()->first()->contract_budget ?>
                         </div>
 
                         {{-- </select> --}}
                     </div>
                     @if ($contract_budget == 0)
                     <div class="form-group">
-                        <label for="recipient-name" class="form-label">دویجه*</label>
+                        <label for="recipient-name" class="form-label">بودیجه*</label>
                         <input name="contract_budget" value="{{ $contract_budget }}" id="date2"  type="number" class="form-control">
+                        {{-- <input name="contract_budget" value="34123" id="date2"  type="number" class="form-control"> --}}
                     </div>
 
                     <div class="modal-footer">

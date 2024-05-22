@@ -73,6 +73,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/report_project_tracking', [ReportProjectTrackingController::class, 'store'])->name('report_project_tracking.store');
     Route::get('/report_project_tracking/{id}/department_id/{department_id}/project_tracking_id/{project_tracking_id}', [ReportProjectTrackingController::class, 'show'])->name('report_project_tracking.show');
     Route::patch('/reject_activity_reported', [ReportProjectTrackingController::class,'reject_activity'])->name('reject_activity_reported.reject_activity');
+    Route::get('/procurement_type/{id}', [ProjectTrackingController::class,'changes_procurement_type'])->name('procurement_type.changes_procurement_type');
 
     Route::resource('/department_activity', DepartmentActivityController::class);
     Route::get('/status_department_activity/{id}/department_id/{department_id}', [DepartmentActivityController::class,'status_department_activity'])->name('department_activity.status_department_activity');

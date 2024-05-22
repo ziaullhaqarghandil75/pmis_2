@@ -47,12 +47,13 @@ class ProjectTrackingController extends Controller
         if(!(auth::user()->can('view_project_tracking'))){
             return view('layouts.403');
         }
+        $project = Project::with('units','impliment_departments','management_departments','design_departments')->find($id);
 
         $project_trackings = ProjectTracking::with('project_departments','project_projcts')->where('project_id','=',$id)->get();
         $percentage_project_trackings = ReportProjectTracking::where('project_id','=',$id)->get();
+
         $departments = Depratment::where('status','=','1')->get();
 
-        $project = Project::with('goals','units','impliment_departments','management_departments','design_departments')->find($id);
         return view('project.project_tracking', compact('project','departments','project_trackings','percentage_project_trackings'));
     }
 
@@ -195,5 +196,20 @@ class ProjectTrackingController extends Controller
 
 
         return redirect()->route('project_tracking.show',$id)->with('success', 'بودیجه شما اضافه گردید.');
+    }
+    public function changes_procurement_type(Request $request, string $id)
+    {
+
+        // if(!(auth::user()->can('add_contract_budget'))){
+        //     return view('layouts.403');
+        // }
+
+        // $project = new Project();
+        $procurement_type_update = Project::find($id);
+        // dd($procurement_type_update);
+        $procurement_type_update->update([
+            'procurement_type' => '1',
+        ]);
+        return redirect()->back()->with('success', 'حالت تدارکاتی شما تغیر کرد.');
     }
 }

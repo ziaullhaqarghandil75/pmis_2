@@ -50,12 +50,9 @@
                                     <tr>
                                         <td>{{ $key+1 }}</td>
                                         <td>{{ $project->name }}</td>
-                                        <td>@foreach($project->goals as $goal){{ $goal->name }} @endforeach</td>
+                                        <td>@foreach($project->goal_category as $goal){{ $goal->name }} @endforeach</td>
                                         <td>@foreach($project->districts as $district){{ $district->name }} @endforeach</td>
-                                        <td>@foreach($project->budgets as $budget){{ number_format($budget->main_budget) }} افغانی @endforeach</td>
-                                        {{-- <td>@foreach($project->impliment_departments as $impliment_department){{ $impliment_department->name_da }} @endforeach</td> --}}
-                                        {{-- <td>@foreach($project->management_departments as $management_department){{ $management_department->name_da }} @endforeach</td> --}}
-                                        {{-- <td>@foreach($project->design_departments as $design_department){{ $design_department->name_da }} @endforeach</td> --}}
+                                        <td>{{ number_format($project->budgets()->first()->main_budget) }} افغانی</td>
                                         <?php
                                             $project_modes = App\Models\Project\ProjectTracking::with('project_departments','percentage_project_view')->where('project_id','=',$project_tracking->project_id)->orderByDesc('id')->first();
                                         ?>
@@ -140,13 +137,10 @@
                                             @endif
                                         </td>
                                         <td>{{ $project->name }}</td>
-                                        <td>@foreach($project->goals as $goal){{ $goal->name }} @endforeach</td>
+                                        <td>@foreach($project->goal_category as $goal){{ $goal->name }} @endforeach</td>
                                         <td>@foreach($project->districts as $district){{ $district->name }} @endforeach</td>
-                                        <td>@foreach($project->budgets as $budget){{ number_format($budget->main_budget) }} افغانی @endforeach</td>
-                                        {{-- <td>@foreach($project->impliment_departments as $impliment_department){{ $impliment_department->name_da }} @endforeach</td> --}}
-                                        {{-- <td>@foreach($project->management_departments as $management_department){{ $management_department->name_da }} @endforeach</td> --}}
-                                        {{-- <td>@foreach($project->design_departments as $design_department){{ $design_department->name_da }} @endforeach</td> --}}
-
+                                        <td>{{ number_format($project->budgets()->first()->main_budget) }} افغانی</td>
+                                        {{-- <td>@foreach($project->budgets as $budget){{ number_format($budget->main_budget) }} افغانی @endforeach</td> --}}
 
                                         <td>
                                             <div class="btn-group">

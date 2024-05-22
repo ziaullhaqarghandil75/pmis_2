@@ -8,10 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class GoalCategory extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'name',
-        'goal_id',
-    ];
+    protected $guarded = [];
     public function goals(){
         return $this->hasMany(Goal::class,'id','goal_id');
     }

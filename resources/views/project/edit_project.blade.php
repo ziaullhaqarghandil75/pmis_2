@@ -167,7 +167,11 @@
                         <div class="card-header bg-success">
                             <h4 class="m-b-0 text-white">بخش بودیجه</h4>
                         </div>
-                        <?php $budget =  $project->budgets->first() ?>
+                        <?php
+                         $budget =  $project->budgets;
+                         $year_budget =  $project->budgets->year_budgets->first();
+                         ?>
+                         {{-- @dd($year_budget->this_year_budget) --}}
                             <div class=" card-body">
                                     <div class="row">
                                         <div class="col-md-6 col-sm-6">
@@ -186,7 +190,7 @@
                                             <div class="form-group has-danger row">
                                                 <label class="control-label col-md-2">بودجه اختصاصی برای این سال*</label>
                                                 <div class="col-md-9">
-                                                    <input value="{{ ($budget != null) ? $budget->for_this_year : '' }}" type="number" name="for_this_year"
+                                                    <input value="{{ ($year_budget != null) ? $year_budget->this_year_budget : '' }}" type="number" name="for_this_year"
                                                         class="@error('for_this_year') is-invalid @enderror form-control" placeholder="">
                                                     @error('for_this_year')
                                                     <p class="invalid-feedback">{{ $message }}</p>

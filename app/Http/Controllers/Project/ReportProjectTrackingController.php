@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Project;
 
 use App\Http\Controllers\Controller;
+use App\Models\Plan\Depratment;
 use App\Models\Project\DepartmentActivity;
 use App\Models\Project\Project;
 use App\Models\Project\ReportProjectTracking;
@@ -75,16 +76,16 @@ class ReportProjectTrackingController extends Controller
      */
     public function show(string $id, string $department_id,string $project_tracking_id)
     {
-        $project = Project::with('goals','units','impliment_departments','management_departments','design_departments')->find($id);
+        $project = Project::with('units','impliment_departments','management_departments','design_departments')->find($id);
         $reports = ReportProjectTracking::with('department_reprot','department_activities')
                                         ->where('project_id','=',$id)
                                         ->where('department_id','=',$department_id)->get();
 
-        $department_activity_for_add = ReportProjectTracking::with('department_reprot','department_activities')
-                                        ->where('project_id','=',$id)
-                                        ->where('department_id','=',$department_id)
-                                        ->where('reject_activity','!=',null)
-                                        ->where('number','=',0)->first();
+        $department_activity_for_add_after_insert = ReportProjectTracking::with('department_reprot','department_activities')
+                                                    ->where('project_id','=',$id)
+                                                    ->where('department_id','=',$department_id)
+                                                    ->where('reject_activity','!=',null)
+                                                    ->where('number','=',0)->first();
 
         // dd($department_activity_for_add);
         $total_percentage = ReportProjectTracking::where('report_project_tracking.project_id', $id)
@@ -93,11 +94,37 @@ class ReportProjectTrackingController extends Controller
         ->join('department_activities', 'department_activities.id', '=', 'report_project_tracking.department_activity_id')
         ->sum('department_activities.acitvity_percentage');
 
-        $department_activities = DepartmentActivity::where('department_id','=',$department_id)
-                                                    ->where('status','=','1')
-                                                    ->orderBy('sort_of_activity','asc')->get();
 
-        return view('project.report_project_tracking', compact('project','reports','department_id','id','total_percentage','project_tracking_id','department_activities','department_activity_for_add'));
+        if($project->procurement_type == '1'){
+            $department_activities = DepartmentActivity::with('department_activities')->where('department_id','=',$department_id)
+                ->where('status','=','1')
+                ->orderBy('sort_of_activity','asc')->get();
+
+            if($project->impliment_departments->first()->name_da =='سکتور خصوصی'or $project->impliment_departments->first()->name_da =='سکتور_خصوصی'){
+                    if($department_activities != null and $department_activities->first()->department_activities->first()->name_da == 'ریاست تدارکات' or $department_activities->first()->department_activities->first()->name_da == 'ریاست_تدارکات'){
+
+                        $depratment = Depratment::where('name_da','LIKE','%تدارکات%')
+                        ->where('name_da','LIKE','%ملی%')
+                        ->where('status','=','1')
+                        ->first();
+
+                        $department_activities = DepartmentActivity::with('department_activities')->where('department_id','=',$depratment->id)
+                        ->where('status','=','1')
+                        ->orderBy('sort_of_activity','asc')->get();
+                    }
+
+            }else{
+                $department_activities = DepartmentActivity::with('department_activities')->where('department_id','=',$department_id)
+                                                        ->where('status','=','1')
+                                                        ->orderBy('sort_of_activity','asc')->get();
+            }
+                // dd($department_activities);
+        }else{
+            $department_activities = DepartmentActivity::with('department_activities')->where('department_id','=',$department_id)
+                                                        ->where('status','=','1')
+                                                        ->orderBy('sort_of_activity','asc')->get();
+        }
+        return view('project.report_project_tracking', compact('project','reports','department_id','id','total_percentage','project_tracking_id','department_activities','department_activity_for_add_after_insert'));
 
     }
 

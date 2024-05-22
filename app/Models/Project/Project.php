@@ -14,7 +14,7 @@ class Project extends Model
 
     use HasFactory;
     protected $guarded = [];
-    public function goals(){
+    public function goal_category(){
         return $this->hasMany(GoalCategory::class,"id","goal_id");
     }
     public function units(){
@@ -35,7 +35,11 @@ class Project extends Model
     }
     public function budgets()
     {
-        return $this->hasMany(budgets::class);
+        return $this->hasOne(Budgets::class);
+    }
+    public function project_trackings()
+    {
+        return $this->hasMany(ProjectTracking::class,'project_id','id');
     }
 
 }
