@@ -212,4 +212,20 @@ class ProjectTrackingController extends Controller
         ]);
         return redirect()->back()->with('success', 'حالت تدارکاتی شما تغیر کرد.');
     }
+    // public function export()
+    // {
+    //     // dd('dfas');
+
+    //     // if(!(auth::user()->can('add_contract_budget'))){
+    //     //     return view('layouts.403');
+    //     // }
+
+    //     // // $project = new Project();
+    //     // $procurement_type_update = Project::find($id);
+    //     // // dd($procurement_type_update);
+    //     // $procurement_type_update->update([
+    //     //     'procurement_type' => '1',
+    //     // ]);
+    //     // return redirect()->back()->with('success', 'حالت تدارکاتی شما تغیر کرد.');
+    // }
 }

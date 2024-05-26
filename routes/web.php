@@ -40,9 +40,10 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(
+    function () {
     Route::get('/', function () {
-        return view('welcome');
+        return view('dashboard');
     });
     //  start account settings
     Route::resource('/user', UserController::class);
@@ -66,6 +67,7 @@ Route::middleware('auth')->group(function () {
 
     //  start project settings
     Route::resource('/project', ProjectController::class);
+    Route::get('/export', [ProjectController::class,'export'])->name('project.export');
     Route::resource('/project_tracking', ProjectTrackingController::class);
     Route::patch('/budget_after_design/{id}', [ProjectTrackingController::class,'add_budget_after_design'])->name('budget_after_design.add_budget_after_design');
     Route::patch('/contract_budget/{id}', [ProjectTrackingController::class,'add_contract_budget'])->name('contract_budget.add_contract_budget');

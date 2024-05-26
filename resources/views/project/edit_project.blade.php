@@ -167,10 +167,16 @@
                         <div class="card-header bg-success">
                             <h4 class="m-b-0 text-white">بخش بودیجه</h4>
                         </div>
+
                         <?php
-                         $budget =  $project->budgets;
-                         $year_budget =  $project->budgets->year_budgets->first();
+                         $budget =  $project->budgets ?? null;
+
+                         $year_budget =  null;
+                         if ($budget) {
+                            $year_budget = $budget->year_budgets->first() ?? null;
+                            }
                          ?>
+
                          {{-- @dd($year_budget->this_year_budget) --}}
                             <div class=" card-body">
                                     <div class="row">

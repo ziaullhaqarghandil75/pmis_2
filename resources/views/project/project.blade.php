@@ -21,6 +21,7 @@
             @can("add_project")
                 <div class="col-lg-2 col-md-4">
                     <a href="{{ route('project.create') }}" class="btn w-100 btn-outline-info"><i class="fa fa-plus-circle"></i> افزودن پروژه جدید</a>
+                    <a href="{{ route('project.export') }}" class="btn w-100 btn-outline-info"><i class="fa fa-plus-circle"></i> دانلود</a>
                 </div>
             @endcan
             </div>
@@ -139,7 +140,8 @@
                                         <td>{{ $project->name }}</td>
                                         <td>@foreach($project->goal_category as $goal){{ $goal->name }} @endforeach</td>
                                         <td>@foreach($project->districts as $district){{ $district->name }} @endforeach</td>
-                                        <td>{{ number_format($project->budgets()->first()->main_budget) }} افغانی</td>
+
+                                        <td>{{ ($project->budgets()->first() != null) ? number_format($project->budgets()->first()->main_budget):'0' }} افغانی</td>
                                         {{-- <td>@foreach($project->budgets as $budget){{ number_format($budget->main_budget) }} افغانی @endforeach</td> --}}
 
                                         <td>
