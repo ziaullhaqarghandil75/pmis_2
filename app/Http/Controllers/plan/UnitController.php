@@ -16,9 +16,9 @@ class UnitController extends Controller
     public function index()
     {
         if(!(auth::user()->can('view_unit') and auth::user()->can('units'))){
-            return view('layouts.403'); 
+            return view('layouts.403');
         }
-        
+
         $units = Unit::get();
         $edit_unit = false;
 
@@ -48,7 +48,7 @@ class UnitController extends Controller
             'unit_name_fa' => 'required|unique:'.Unit::class,
             'unit_name_en' => 'required|unique:'.Unit::class,
         ]);
-      
+
         // here we will insert product in db
         $unit = new Unit();
         $unit->unit_name_fa = $request->unit_name_fa;
@@ -64,7 +64,7 @@ class UnitController extends Controller
     public function show(string $id)
     {
         if(!(auth::user()->can('view_unit') and auth::user()->can('units'))){
-            return view('layouts.403'); 
+            return view('layouts.403');
         }
     }
 
@@ -93,13 +93,13 @@ class UnitController extends Controller
             'unit_name_fa' => 'required',
             'unit_name_en' => 'required',
         ]);
-       
+
         $update = Unit::find($id);
         $update->update([
             'unit_name_fa' => $request->unit_name_fa,
             'unit_name_en' => $request->unit_name_en,
         ]);
-        return redirect()->route('unit.index')->with('success', ' معلومات واحد شما ویرایش شد.');
+        return redirect()->route('unit.index')->with('success', ' معلومات واحد شما تصحیح شد.');
     }
 
     /**

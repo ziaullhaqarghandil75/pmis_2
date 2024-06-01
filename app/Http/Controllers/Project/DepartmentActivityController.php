@@ -7,6 +7,7 @@ use App\Models\Plan\Depratment;
 use App\Models\Project\DepartmentActivity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class DepartmentActivityController extends Controller
 {
@@ -43,13 +44,18 @@ class DepartmentActivityController extends Controller
             return view('layouts.403');
         }
         $request->validate([
-            'acitvity_name'       => ['required', 'string','unique:'.DepartmentActivity::class],
+            'acitvity_name' => [
+                'required',
+                'string',
+                Rule::unique('department_activities')->where(function ($query) use ($request) {
+                    return $query->where('department_id','=', $request->department_id);
+                })
+            ],
             'acitvity_percentage' => ['required','numeric','between:0,100'],
             'department_id'       => ['required'],
             'status'              => ['required','numeric','between:0,1'],
             'sort_of_activity'    => ['required','numeric'],
         ]);
-        // dd($request->all());
 
 
         // here we will insert product in db
@@ -142,7 +148,7 @@ class DepartmentActivityController extends Controller
             'department_id' => $request->department_id,
             'sort_of_activity' => $request->sort_of_activity,
         ]);
-        return redirect()->back()->with('success', 'فعالیت شما ویرایش گریدید.');
+        return redirect()->back()->with('success', 'فعالیت شما تصحیح گریدید.');
     }
 
     /**

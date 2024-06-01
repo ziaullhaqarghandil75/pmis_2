@@ -82,7 +82,7 @@ class GoalController extends Controller
         $update->update([
             'goal_name' => $request->goal_name,
         ]);
-        return redirect()->route('goal.index')->with('success', ' معلومات هدف شما ویرایش شد.');
+        return redirect()->route('goal.index')->with('success', ' معلومات هدف شما تصحیح شد.');
     }
 
     /**

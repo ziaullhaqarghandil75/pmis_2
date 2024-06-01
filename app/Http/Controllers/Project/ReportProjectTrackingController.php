@@ -79,17 +79,20 @@ class ReportProjectTrackingController extends Controller
         $project = Project::with('units','impliment_departments','management_departments','design_departments')->find($id);
         $reports = ReportProjectTracking::with('department_reprot','department_activities')
                                         ->where('project_id','=',$id)
+                                        ->where('project_tracking_id','=',$project_tracking_id)
                                         ->where('department_id','=',$department_id)->get();
 
         $department_activity_for_add_after_insert = ReportProjectTracking::with('department_reprot','department_activities')
                                                     ->where('project_id','=',$id)
                                                     ->where('department_id','=',$department_id)
+                                                    ->where('project_tracking_id','=',$project_tracking_id)
                                                     ->where('reject_activity','!=',null)
                                                     ->where('number','=',0)->first();
 
         // dd($department_activity_for_add);
         $total_percentage = ReportProjectTracking::where('report_project_tracking.project_id', $id)
         ->where('report_project_tracking.department_id', $department_id)
+        ->where('report_project_tracking.project_tracking_id', $project_tracking_id)
         ->where('report_project_tracking.reject_activity', null)
         ->join('department_activities', 'department_activities.id', '=', 'report_project_tracking.department_activity_id')
         ->sum('department_activities.acitvity_percentage');

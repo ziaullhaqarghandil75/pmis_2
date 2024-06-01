@@ -33,7 +33,7 @@ class GoalCategoryController extends Controller
         $request->validate([
             'name' => 'required|string|unique:'.GoalCategory::class,
             'goal_id' => 'required',
-        ]); 
+        ]);
 
         if($request->goal_id == 0){
             return redirect()->back()->with('error', 'لطف هدف را انتخاب نماید.');
@@ -61,13 +61,13 @@ class GoalCategoryController extends Controller
      */
     public function edit(string $id)
     {
-        
+
         $edit_goal_category = GoalCategory::find($id);
 
         $goal_categories = GoalCategory::get();
 
         $edit_goal = false;
-        
+
         $goals = Goal::get();
         return view('plan.goal', compact('edit_goal_category','goal_categories','goals','edit_goal'));
     }
@@ -90,7 +90,7 @@ class GoalCategoryController extends Controller
             'name' => $request->name,
             'goal_id' => $request->goal_id,
         ]);
-        return redirect()->route('goal.index')->with('success', ' معلومات دسته بندی شما ویرایش شد.');
+        return redirect()->route('goal.index')->with('success', ' معلومات دسته بندی شما تصحیح شد.');
     }
 
     /**

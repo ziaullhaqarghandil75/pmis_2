@@ -4,7 +4,7 @@
     <div class="col-md-12 align-self-center text-end">
         <div class="d-flex justify-content-end align-items-center">
             <ol class="breadcrumb justify-content-end">
-                <li class="breadcrumb-item"><a href="javascript:void(0)">ویرایش دیپارتمنت ها</a></li>
+                <li class="breadcrumb-item"><a href="javascript:void(0)">تصحیح دیپارتمنت ها</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('department.index') }}">دیپارتمنت ها</a></li>
                 <li class="breadcrumb-item active">تنظیمات پلان</li>
             </ol>
@@ -19,7 +19,7 @@
                 @csrf
                 @method('put')
                 <div class="card-header bg-info">
-                    <h4 class="m-b-0 text-white">ویرایش دیپارتمنت</h4>
+                    <h4 class="m-b-0 text-white">تصحیح دیپارتمنت</h4>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -79,7 +79,7 @@
                     </div>
                         <div class="col-md-1">
                             <button type="submit" class="btn btn-success w-100 text-white">
-                                     ویرایش معلومات</button>
+                                     تصحیح معلومات</button>
                         </div>
                     </div>
                 </div>

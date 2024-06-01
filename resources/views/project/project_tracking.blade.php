@@ -160,9 +160,20 @@
 
                         </li>
                     @else
-
+                        @php $project_tracking_level = collect(); @endphp
                         @foreach($project_trackings as $key => $project_tracking)
-                            <?php $level++ ?>
+
+                            @if (!$project_tracking_level->contains($project_tracking->department_id))
+
+                                @if($project_tracking->reject_project_tracking == null)
+                                    <?php $level++ ?>
+                                    @php
+                                         $project_tracking_level->push($project_tracking->department_id);
+                                    @endphp
+                                @endif
+
+                            @endif
+
                             <li @if($loop->even) class="timeline-inverted" @endif>
                                 <div class="timeline-badge success">
                                     {{$key+1}}
@@ -170,11 +181,12 @@
                                 <?php
                                 $percentage = App\Models\Project\ReportProjectTracking::where('report_project_tracking.project_id', $project_tracking->project_id)
                                                                                          ->where('report_project_tracking.department_id', $project_tracking->department_id)
+                                                                                         ->where('report_project_tracking.project_tracking_id', $project_tracking->id)
                                                                                          ->where('report_project_tracking.reject_activity', null)
                                                                                          ->join('department_activities', 'department_activities.id', '=', 'report_project_tracking.department_activity_id')
                                                                                          ->sum('department_activities.acitvity_percentage');
                                 ?>
-                                <div  @if($percentage == 100) style="background-color: #fad4d4;" @endif id="myDiv" class="timeline-panel">
+                                <div  @if($percentage == 100) style="background-color: #fad4d4;" @endif id="myDiv" class="timeline-panel @if($project_tracking->reject_project_tracking != null) btn-warning @endif">
                                     <div class="timeline-heading">
                                         <h4 class="timeline-title">@foreach($project_tracking->project_departments as $project_department) {{ $project_department->name_da }} @endforeach</h4>
                                         <p><small class="text-muted"><i class="fa fa-clock-o"></i>تاریخ ارسال به این بخش : {{ jdate($project_tracking->date_of_send)->format('%A - d / m / Y') }}</small></p>
@@ -193,38 +205,69 @@
                                     <br>
                                     <div class="timeline-body">
 
-                                        <a href="{{ asset($project_tracking->file) }}" class="btn btn-success text-white"><i class="fas fa-download"></i>
+                                        <a href="{{ asset($project_tracking->file) }}" class="btn btn-success text-white m-1"><i class="fas fa-download"></i>
                                             دانلود فایل ها</a>
 
                                         @if($loop->last)
+                                            @if((auth()->user()->can('reject_project_tracking')))
+                                                <button type="button" data-bs-toggle="modal" data-bs-target="#responsive-modal-reject"
+                                                                         class="btn btn-primary text-white m-1" onclick="setProjectTrackingId({{ $project_tracking->id }})">
+                                                                         <i class="far fa-share-square"></i> رد کردن
+                                                                        </button>
+                                            @endif
+
                                             @if((auth()->user()->can('all_tracking_departments')))
 
-                                                <button type="button" data-bs-target="#responsive-modal" data-bs-toggle="modal"
-                                                        class="btn btn-primary text-white"><i class="far fa-share-square"></i> ارسال پروژه</button>
-
+                                                @php $name_da = $project_tracking->project_departments->first()->name_da; @endphp
+                                                {{-- @dd($name_da) --}}
+                                                @if ((strpos($name_da, 'ریاست کار') !== false or strpos($name_da, 'حفظ و مراقبت') !== false))
+                                                @elseif ((strpos($name_da, 'ریاست تنظیم') !== false or strpos($name_da, 'ریاست_تنظیم') !== false))
+                                                @else
+                                                    <button type="button" data-bs-target="#responsive-modal" data-bs-toggle="modal"
+                                                    class="btn btn-primary text-white m-1"><i class="far fa-share-square"></i> ارسال پروژه</button>
+                                                @endif
 
                                             @else
                                                 @if($project_tracking->department_id == auth()->user()->department_id)
-                                                    <button type="button" data-bs-target="#responsive-modal" data-bs-toggle="modal"
-                                                        class="btn btn-primary text-white"><i class="far fa-share-square"></i> ارسال پروژه</button>
 
-                                                    <a href="{{ route('report_project_tracking.show',[$project->id,$project_tracking->department_id,$project_tracking->id]) }}"
-                                                            class="btn btn-info text-white"><i class="fas fa-info-circle"></i> گزارش</a>
+                                                    @php $name_da = $project_tracking->project_departments->first()->name_da; @endphp
+                                                    {{-- @dd($name_da) --}}
+                                                    @if ((strpos($name_da, 'ریاست کار') !== false or strpos($name_da, 'حفظ و مراقبت') !== false))
+                                                    @elseif ((strpos($name_da, 'ریاست تنظیم') !== false or strpos($name_da, 'ریاست_تنظیم') !== false))
+                                                    @else
+                                                        <button type="button" data-bs-target="#responsive-modal" data-bs-toggle="modal"
+                                                        class="btn btn-primary text-white m-1"><i class="far fa-share-square"></i> ارسال پروژه</button>
+                                                    @endif
+
+                                                    {{-- <button type="button" data-bs-target="#responsive-modal" data-bs-toggle="modal" --}}
+                                                        {{-- class="btn btn-primary text-white m-1"><i class="far fa-share-square"></i> ارسال پروژه</button> --}}
+                                                    {{-- @if((auth()->user()->can('reject_project_tracking')))
+                                                        <button type="submit" data-bs-target="#responsive-modal-reject" data-bs-toggle="modal"
+                                                            class="btn btn-primary text-white m-1"><i class="far fa-share-square" onclick="setProjectTrackingId({{ $project_tracking->id }})"></i>sdfsرد کردن</button>
+                                                    @endif --}}
+
+                                                    @if($project_tracking->reject_project_tracking == null)
+                                                            <a href="{{ route('report_project_tracking.show',[$project->id,$project_tracking->department_id,$project_tracking->id]) }}"
+                                                            class="btn btn-info text-white m-1"><i class="fas fa-info-circle"></i> گزارش</a>
+                                                    @endif
                                                 @endif
                                             @endif
                                         @endif
                                         @if((auth()->user()->can('all_tracking_departments')))
-                                            <a href="{{ route('report_project_tracking.show',[$project->id,$project_tracking->department_id,$project_tracking->id]) }}"
-                                                class="btn btn-info text-white"><i class="fas fa-info-circle"></i> گزارش</a>
+                                            @if($project_tracking->reject_project_tracking == null)
+                                                <a href="{{ route('report_project_tracking.show',[$project->id,$project_tracking->department_id,$project_tracking->id]) }}"
+                                                    class="btn btn-info text-white m-1"><i class="fas fa-info-circle"></i> گزارش</a>
+                                            @endif
                                         @endif
+
                                         @can('add_budget_after_design')
                                             @foreach ($project->design_departments as $design_department)
                                                 @if($percentage == 100 and $design_department->id == $project_tracking->department_id)
                                                     <button type="button" data-bs-target="#responsive-modal-budgets" data-bs-toggle="modal"
-                                                    class="btn btn-info text-white"><i class="fas fa-dollar-sign"></i> افزودن بودیجه بعد از دیزاین</button>
+                                                    class="btn btn-info text-white m-1"><i class="fas fa-dollar-sign"></i> افزودن بودیجه بعد از دیزاین</button>
                                                 @elseif($percentage == 100 and $project_tracking->department_id == auth()->user()->department_id)
                                                     <button type="button" data-bs-target="#responsive-modal-budgets" data-bs-toggle="modal"
-                                                    class="btn btn-info text-white"><i class="fas fa-dollar-sign"></i> افزودن بودیجه بعد از دیزاین</button>
+                                                    class="btn btn-info text-white m-1"><i class="fas fa-dollar-sign"></i> افزودن بودیجه بعد از دیزاین</button>
                                                 @endif
                                             @endforeach
                                         @endcan
@@ -240,11 +283,15 @@
                                                 and !$rocurement_department == null
                                                 and ($project_department->name_da == 'ریاست تدارکات' or $project_department->name_da == 'ریاست_تدارکات' or $project_department->name_da == 'تدارکات')
                                                 )
+                                                    @if($project_tracking->reject_project_tracking == null)
                                                         <button type="button" data-bs-target="#responsive-modal-contract_budget" data-bs-toggle="modal"
-                                                        class="btn btn-info text-white"><i class="fas fa-dollar-sign"></i>افزودن بودیجه قرار داد شده</button>
+                                                            class="btn btn-info text-white"><i class="fas fa-dollar-sign"></i>افزودن بودیجه قرار داد شده</button>
+                                                    @endif
                                                 @elseif ($percentage == 100 and $impliment_department->id == $project_tracking->department_id)
+                                                    @if($project_tracking->reject_project_tracking == null)
                                                         <button type="button" data-bs-target="#responsive-modal-contract_budget" data-bs-toggle="modal"
                                                         class="btn btn-info text-white"><i class="fas fa-dollar-sign"></i>افزودن بودیجه قرار داد شده</button>
+                                                    @endif
 
                                                 @endif
                                             @endforeach
@@ -288,7 +335,8 @@
                                     @endforeach
 
                                 @elseif ($level == 2)
-                                    @foreach($project->impliment_departments as $impliment_department)
+                                    {{-- @foreach($impliment_department = $project->impliment_departments->first() as ) --}}
+                                    @php $impliment_department = $project->impliment_departments->first() @endphp
                                         @if (
                                                $impliment_department->name_da == 'سکتور خصوصی'
                                             or $impliment_department->name_da == 'سکتور_خصوصی'
@@ -302,7 +350,6 @@
                                             $rocurement_department = App\Models\Plan\Depratment::where('name_da','LIKE','%تدارکات%')->first();
 
                                             ?>
-
                                             {{ $rocurement_department->name_da }}
                                             <input name="department_id" value="{{ $rocurement_department->id }}" type="hidden">
                                         @else
@@ -310,12 +357,12 @@
                                             {{ $impliment_department->name_da }}
                                             <input name="department_id" value="{{ $impliment_department->id }}" type="hidden"
                                         @endif
-                                    @endforeach
+
                                 @elseif ($level == 3)
-                                    @foreach($project->management_departments as $management_department)
+                                    @php $management_department = $project->management_departments->first() @endphp
                                         {{ $management_department->name_da }}
+
                                         <input name="department_id" value="{{ $management_department->id }}" type="hidden">
-                                    @endforeach
                                 @endif
                             </h4>
                         </div>
@@ -348,6 +395,10 @@
 </div>
 <!-- end send modal content -->
 {{-- @dd(jdate('2024/5/19')) --}}
+
+{{-- @dd($project->impliment_departments) --}}
+{{-- @dd($project->management_departments) --}}
+{{-- @dd($project_trackings->project_departments) --}}
 
 @can('add_budget_after_design')
 <!-- start send modal content budget after design -->
@@ -465,8 +516,69 @@
     </div>
 </div>
 <!-- end send modal content budget after design  -->
-
 @endcan
+
+{{-- @dd($project_trackings->isEmpty()) --}}
+
+@can('reject_project_tracking')
+<!-- start reject project tracking -->
+<div id="responsive-modal-reject" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">رد کردن پروسه</h4>
+                <button type="submit" class="btn-close" data-bs-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                @php
+                    $project_tracking_id = !$project_trackings->isEmpty() ? $project_tracking->id : 1;
+                @endphp
+                {{-- <form action="{{ route('project_tracking.reject_project_tracking', $project_tracking->id) }}" method="POST" enctype="multipart/form-data"> --}}
+                <form action="{{ route('project_tracking.reject_project_tracking', $project_tracking_id ) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PATCH')
+                    <div class="form-group">
+                        {{-- <input name="project_tracking_id" type="test" id="project_tracking_id"> --}}
+                        <input name="project_tracking_id" type="hidden" id="project_tracking_id" class="form-control">
+                    </div>
+                    {{-- <div class="col-md-6"> --}}
+                        <div class="form-group">
+                            <label class="form-label">دیپارتمنت</label>
+                            <select class="form-control form-select" name="department_id">
+                                @php $addedDepartments = collect(); @endphp
+
+                                @foreach ($project_trackings as $project_tracking)
+                                    @php $department = $project_tracking->project_departments->first(); @endphp
+
+                                    @if (!$addedDepartments->contains($department->id))
+                                        <option value="{{ $department->id }}">{{ $department->name_da }}</option>
+                                        @php
+                                            $addedDepartments->push($department->id);
+                                        @endphp
+                                    @endif
+                                @endforeach
+
+                            </select>
+                        </div>
+                    {{-- </div> --}}
+                    <div class="form-group">
+                        <label for="message-text" class="form-label">توضیحات*</label>
+                        <textarea name="reject_project_tracking_comment" rows="5" class="form-control" id="message-text"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="submit" class="btn btn-success text-white"> <i class="far fa-share-square"></i>
+                                ذخیر معلومات</button>
+                    </div>
+                    {{-- @endif --}}
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- end reject project tracking -->
+@endcan
+
 @endsection
 @section('script')
 <script src="{{ asset('assets/node_modules/horizontal-timeline/js/horizontal-timeline.js') }}"></script>
@@ -504,9 +616,6 @@
         , disableHolidays: true
     });
 
-    // kamaDatepicker('date4', {
-    //     position: 'top' // top, bottom or auto
-    // });
 
     kamaDatepicker('date5-1', {
         position: 'auto' // top, bottom or auto
@@ -517,12 +626,16 @@
         , parentId: 'date5-parent'
     });
 
-    // for testing sync functionallity
-    // $("#date2").val("1311/10/01");
-
     // init without ids inputs
     document.querySelectorAll('#without-ids input').forEach(input => { kamaDatepicker(input); });
 </script>
 
+<script>
+    function setProjectTrackingId(id) {
+        console.log('Setting project tracking ID:', id);
+        const inputElement = document.getElementById('project_tracking_id');
+            inputElement.value = id;
+    }
+</script>
 
 @endsection

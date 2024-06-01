@@ -33,7 +33,7 @@
                                     @error('unit_name_fa')
                                     <p class="invalid-feedback">{{ $message }}</p>
                                     @enderror
-                                    
+
                                 </div>
                             </div>
                         </div>
@@ -48,7 +48,7 @@
                                 </div>
                             </div>
                         </div>
-                       
+
                         <div class="col-md-2">
                             <button type="submit" class="btn btn-success text-white"> <i class="fa fa-check"></i>
                                     ذخیره</button>
@@ -60,7 +60,7 @@
                     @csrf
                     @method('put')
                     <div class="card-header bg-success">
-                        <h4 class="m-b-0 text-white">ویرایش واحد</h4>
+                        <h4 class="m-b-0 text-white">تصحیح واحد</h4>
                     </div>
                     <div class="card-body">
                     </div>
@@ -87,10 +87,10 @@
                                 </div>
                             </div>
                         </div>
-                       
+
                         <div class="col-md-2">
                             <button type="submit" class="btn btn-success text-white"> <i class="fa fa-check"></i>
-                                    ویرایش</button>
+                                    تصحیح</button>
                         </div>
                     </div>
                 </form>
@@ -106,7 +106,7 @@
                                 <th>#</th>
                                 <th>نام فارسی</th>
                                 <th>نام انگلیسی</th>
-                                <th>ویرایش</th>
+                                <th>تصحیح</th>
                                 <th>حذف</th>
                             </tr>
                         </thead>
@@ -118,7 +118,7 @@
                                 <td>{{$unit->unit_name_fa}}</td>
                                 <td>{{$unit->unit_name_en}}</td>
                                 <td>
-                                    <a href="{{ route('unit.edit',$unit->id) }}" type="submit" class="btn btn-success text-white">ویرایش <i class="fas fa-eye-dropper"></i> </a>
+                                    <a href="{{ route('unit.edit',$unit->id) }}" type="submit" class="btn btn-success text-white">تصحیح <i class="fas fa-edit"></i> </a>
                                 </td>
                                 <td>
                                     <form action="{{ route('unit.destroy',$unit->id) }}" method="POST">

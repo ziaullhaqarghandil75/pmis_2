@@ -48,7 +48,7 @@
                 @csrf
                 @method('put')
                 <div class="card-header bg-success">
-                    <h4 class="m-b-0 text-white">ویرایش دسته بندی هدف</h4>
+                    <h4 class="m-b-0 text-white">تصحیح دسته بندی هدف</h4>
                 </div>
                 <div class="card-body">
                 </div>
@@ -82,7 +82,7 @@
                             </div>
                         </div>
                     <div class="col-md-2">
-                            <button type="submit" class="btn btn-success text-white">ویرایش</button>
+                            <button type="submit" class="btn btn-success text-white">تصحیح</button>
                     </div>
                 </div>
             </form>
@@ -98,7 +98,7 @@
                             <th>#</th>
                             <th>نام</th>
                             <th>هدف</th>
-                            <th>ویرایش</th>
+                            <th>تصحیح</th>
                             <th>حذف</th>
                         </tr>
                     </thead>
@@ -109,7 +109,7 @@
                             <td>{{$goal_category->name}}</td>
                             <td>@foreach($goal_category->goals as $goal){{$goal->goal_name}} @endforeach</td>
                             <td>
-                                <a href="{{ route('goal_category.edit',$goal_category->id) }}" type="submit" class="btn btn-success text-white">ویرایش <i class="fas fa-eye-dropper"></i> </a>
+                                <a href="{{ route('goal_category.edit',$goal_category->id) }}" type="submit" class="btn btn-success text-white">تصحیح <i class="fas fa-edit"></i> </a>
                             </td>
                             <td>
                                 <form action="{{ route('goal_category.destroy',$goal_category->id) }}" method="POST">

@@ -62,7 +62,7 @@
                                         <label class="control-label col-md-4">دیپارتمنت*</label>
                                         <div class="col-md-8">
                                             <select name="department_id" class="form-control form-select">
-                                                <option value="0">--انتخاب دیپارتمنت--</option>
+                                                <option value="">--انتخاب دیپارتمنت--</option>
                                                 @foreach ($departments as $department )
                                                 <option  value="{{ $department->id }}" >
                                                     {{ $department->name_da }}
@@ -110,7 +110,7 @@
                     @csrf
                     @method('put')
                     <div class="card-header bg-success">
-                        <h4 class="m-b-0 text-white">ویرایش فعالیت</h4>
+                        <h4 class="m-b-0 text-white">تصحیح فعالیت</h4>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -177,7 +177,7 @@
 
                             <div class="col-md-1">
                                 <button type="submit" class="btn btn-success w-100 text-white">
-                                         ویرایش معلومات</button>
+                                         تصحیح معلومات</button>
                             </div>
                         </div>
                     </div>
@@ -207,7 +207,7 @@
                                 <th>دیپارتمنت</th>
                                 <th>حالت</th>
                                 @can('edit_department_activity')
-                                <th>ویرایش</th>
+                                <th>تصحیح</th>
                                 @endcan
                                 @can('delete_department_activity')
                                 <th>حذف</th>
@@ -239,7 +239,7 @@
                                 @endcan
                                 @can('edit_department_activity')
                                 <td>
-                                    <a href="{{ route('department_activity.edit',$department_activity->id) }}" type="submit" class="btn btn-success text-white">ویرایش <i class="fas fa-eye-dropper"></i> </a>
+                                    <a href="{{ route('department_activity.edit',$department_activity->id) }}" type="submit" class="btn btn-success text-white">تصحیح <i class="fas fa-edit"></i> </a>
                                 </td>
                                 @endcan
                                 @can('delete_department_activity')

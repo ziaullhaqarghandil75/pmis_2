@@ -99,7 +99,7 @@ class ProjectController extends Controller
 
         $project->districts()->sync($request->input('district_id'));
 
-        $budget = new budgets();
+        $budget = new Budgets();
         $budget->project_id         = $project->id;
         $budget->main_budget        = $request->main_budget;
         $budget->save();
@@ -185,7 +185,7 @@ class ProjectController extends Controller
 
         $update->districts()->sync($request->input('district_id'));
 
-        $budget = budgets::where('project_id','=',$id)->first();
+        $budget = Budgets::where('project_id','=',$id)->first();
 
         if(!$budget == null){
             $budget->update([
@@ -210,7 +210,7 @@ class ProjectController extends Controller
             $year_budget->save();
         }
 
-        return redirect()->route('project.index')->with('success', ' معلومات پروژه شما ویرایش شد.');
+        return redirect()->route('project.index')->with('success', ' معلومات پروژه شما تصحیح شد.');
     }
 
     /**
@@ -230,6 +230,7 @@ class ProjectController extends Controller
     public function export(){
         $file_name ="report-".Carbon::now()->format('Y-m-d ساعت-h');
         // dd($file_name);
+        // where('id','=','35')->
         $projects = Project::with('goal_category.goals','budgets','units','impliment_departments','management_departments','design_departments','districts','project_trackings.project_tracking_details.department_activities')->orderByDesc('id')->get();
         // $projects->all();
         $spreadsheet = new Spreadsheet();
@@ -281,7 +282,7 @@ class ProjectController extends Controller
         $activeWorksheet->setCellValue('Q7', 'تدارکات')->mergeCells('Q7:R7');
         $activeWorksheet->setCellValue('Q8', 'تدارکات داخلی');
         $activeWorksheet->setCellValue('R8', 'تدارکات ملی');
-        $activeWorksheet->setCellValue('S7', 'مرحله تطبیق')->mergeCells('S7:S8');
+        $activeWorksheet->setCellValue('S7', 'تطبیق')->mergeCells('S7:S8');
         $activeWorksheet->setCellValue('T6', 'وضعیت فعلی پروژه')->mergeCells('T6:T8');
         $activeWorksheet->setCellValue('U6', 'تاریخ تکمیل دیزاین')->mergeCells('U6:U8');
         $activeWorksheet->setCellValue('V6', 'تاریخ تکمیل پروسه تدارکات')->mergeCells('V6:V8');
@@ -309,16 +310,13 @@ class ProjectController extends Controller
                                                         ->join('department_activities', 'department_activities.id', '=', 'report_project_tracking.department_activity_id')
                                                         ->sum('department_activities.acitvity_percentage');
 
+            $percentage_impliment = ReportProjectTracking::where('report_project_tracking.project_id', $project->id)
+                                                        ->where('report_project_tracking.department_id', $project->impliment_departments->first()->id)
+                                                        ->where('report_project_tracking.reject_activity', null)
+                                                        ->join('department_activities', 'department_activities.id', '=', 'report_project_tracking.department_activity_id')
+                                                        ->sum('department_activities.acitvity_percentage');
 
-            // dd($project->procurement_type == '1');
-
-            // $year = jdate($project->budgets->year_budgets()->orderByDesc('id')->first()->year)->format('Y');
-
-            // dd();
-            // jdate($year_budget)->format('Y');
             $district_names         = '';
-
-
             foreach($project->districts as $district){
                 $district_names .= $district->name.',';
             }
@@ -338,9 +336,10 @@ class ProjectController extends Controller
             $activeWorksheet->setCellValue('N'.$row_count, 'جدید');
             $activeWorksheet->setCellValue('P'.$row_count, $percentage_design.'%');
 
+            $activeWorksheet->setCellValue('S'.$row_count, ($percentage_impliment != '0') ? $percentage_impliment.'%':'');
+
 
             if($project->impliment_departments->first()->name_da == "سکتور خصوصی" or $project->impliment_departments->first()->name_da == "سکتور_خصوصی"){
-
                 $procurement = Depratment::where('name_da','LIKE','%ریاست%')->where('name_da','LIKE','%تدارکات%')->where('status','=','1')->first();
                 if($project->procurement_type == '0'){
                     $percentage_internal_procurement = ReportProjectTracking::where('report_project_tracking.project_id', $project->id)
@@ -360,10 +359,22 @@ class ProjectController extends Controller
                     ->sum('department_activities.acitvity_percentage');
                     $activeWorksheet->setCellValue('R'.$row_count, $percentage_national_procurement.'%');
                 }
-            }else{
-                $activeWorksheet->setCellValue('Q'.$row_count, "مربوط به تدارکات نیست")->mergeCells('Q'.$row_count.':'.'R'.$row_count);
+                $date_after_design =  ProjectTracking::where('project_id','=',$project->id)->where('department_id','=',$procurement->id)->first();
+                $activeWorksheet->setCellValue('U'.$row_count, jdate($date_after_design->date_of_send)->format('Y-m-d'));
 
+            }else{
+                // dd(jdate($date_after_design->date_of_send)->format('Y-m-d'));
+
+                $date_after_design =  ProjectTracking::where('project_id','=',$project->id)->where('department_id','=',$project->impliment_departments->first()->id)->first();
+                $activeWorksheet->setCellValue('U'.$row_count, jdate($date_after_design->date_of_send)->format('Y-m-d'));
+
+                $activeWorksheet->setCellValue('Q'.$row_count, "مربوط به تدارکات نیست")->mergeCells('Q'.$row_count.':'.'R'.$row_count);
             }
+
+            // if($project->impliment_departments->first()->name_da == 'سکتور خصوصی' or $project->impliment_departments->first()->name_da == 'سکتور_خصوصی'){
+
+            // }
+
 
 
             // اضافه کردن باردار به سلول‌ها

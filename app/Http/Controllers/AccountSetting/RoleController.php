@@ -96,7 +96,7 @@ class RoleController extends Controller
 
         $role->Permissions()->sync($request->input('permission_id'));
 
-        return redirect()->back()->with('success', 'سطح دسترسی ویرایش شد.');
+        return redirect()->back()->with('success', 'سطح دسترسی تصحیح شد.');
     }
 
     /**

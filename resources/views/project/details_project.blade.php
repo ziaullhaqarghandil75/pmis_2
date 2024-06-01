@@ -233,11 +233,13 @@
                                         <?php
                                         $total_percentage = App\Models\Project\ReportProjectTracking::where('report_project_tracking.project_id', $project_tracking->project_id)
                                                                                          ->where('report_project_tracking.department_id', $project_tracking->department_id)
+                                                                                         ->where('report_project_tracking.project_tracking_id', $project_tracking->id)
                                                                                          ->where('report_project_tracking.reject_activity', null)
                                                                                          ->join('department_activities', 'department_activities.id', '=', 'report_project_tracking.department_activity_id')
                                                                                          ->sum('department_activities.acitvity_percentage');
                                         ?>
                                             <div class="progress m-t-20">
+                                                {{-- bg-success --}}
                                                 <div class="progress-bar bg-success" style="width: {{$total_percentage}}%; height:15px;" role="progressbar">{{ $total_percentage }}%</div>
                                             </div>
                                             <div class="accordion-item">
@@ -262,6 +264,7 @@
                                                                 <th>تاریخ</th>
                                                             </thead>
                                                             <tbody>
+
                                                                 @foreach ($project_tracking->project_tracking_details as $count => $project_tracking_detail)
                                                                     <tr style="{{ ($project_tracking_detail->reject_activity != null) ? 'background-color: rgb(226, 43, 83);color: white;':'' }}">
                                                                         {{-- <?php $acitvity_percentage += $project_tracking_detail->department_activities->first()->acitvity_percentage ?> --}}
@@ -272,8 +275,19 @@
                                                                         <td>{{ $project_tracking_detail->description}}</td>
                                                                         <td>{{ ($project_tracking_detail->reject_comment_activity != null) ? $project_tracking_detail->reject_comment_activity:'' }}</td>
                                                                         <td>{{ jdate($project_tracking_detail->created_at)->format('l - d / m / Y')  }}</td>
+
                                                                     </tr>
                                                                 @endforeach
+                                                                @if ($project_tracking->reject_project_tracking_comment != null)
+                                                                <tr class="btn-warning">
+                                                                    <td>
+                                                                        علت مستری این بخش
+                                                                    </td>
+                                                                    <td colspan="6">
+                                                                        {{ $project_tracking->reject_project_tracking_comment }}
+                                                                    </td>
+                                                                </tr>
+                                                                @endif
                                                             </tbody>
                                                         </table>
                                                     </div>

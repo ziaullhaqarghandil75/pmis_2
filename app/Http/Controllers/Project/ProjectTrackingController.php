@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Project;
 
 use App\Http\Controllers\Controller;
 use App\Models\Plan\Depratment;
-use App\Models\Project\budgets;
+use App\Models\Project\Budgets;
 use App\Models\Project\Project;
 use App\Models\Project\ProjectTracking;
 use App\Models\Project\ReportProjectTracking;
@@ -50,6 +50,7 @@ class ProjectTrackingController extends Controller
         $project = Project::with('units','impliment_departments','management_departments','design_departments')->find($id);
 
         $project_trackings = ProjectTracking::with('project_departments','project_projcts')->where('project_id','=',$id)->get();
+        // dd($project_trackings->project_departments());
         $percentage_project_trackings = ReportProjectTracking::where('project_id','=',$id)->get();
 
         $departments = Depratment::where('status','=','1')->get();
@@ -94,7 +95,7 @@ class ProjectTrackingController extends Controller
 
 
             if($current_department_percentage < 100){
-                return redirect()->back()->with('warning', 'فیصدی فعالیت انجام کم است .');
+                return redirect()->back()->with('warning', 'فیصدی فعالیت انجام شده کم است .');
             }
 
             if($project->design_department_id == $current_department_id->department_id ){
@@ -127,10 +128,10 @@ class ProjectTrackingController extends Controller
             ]);
 
             if ($request->hasFile('file')) {
-                $file = $request->file('file');
-                $extension = $file->getClientOriginalExtension();
-                $fileName = $date->format('Y-m-d').'-'.time().'.'.$extension;
-                $path = 'project_file/'.$project->name.'/';
+                $file       = $request->file('file');
+                $extension  = $file->getClientOriginalExtension();
+                $fileName   = $date->format('Y-m-d').'-'.time().'.'.$extension;
+                $path       = 'project_file/'.$project->name.'/';
                 $file->move($path, $fileName);
             }
 
@@ -212,20 +213,51 @@ class ProjectTrackingController extends Controller
         ]);
         return redirect()->back()->with('success', 'حالت تدارکاتی شما تغیر کرد.');
     }
-    // public function export()
-    // {
-    //     // dd('dfas');
 
-    //     // if(!(auth::user()->can('add_contract_budget'))){
-    //     //     return view('layouts.403');
-    //     // }
+    public function reject_project_tracking (Request $request, string $id){
 
-    //     // // $project = new Project();
-    //     // $procurement_type_update = Project::find($id);
-    //     // // dd($procurement_type_update);
-    //     // $procurement_type_update->update([
-    //     //     'procurement_type' => '1',
-    //     // ]);
-    //     // return redirect()->back()->with('success', 'حالت تدارکاتی شما تغیر کرد.');
-    // }
+        if(!(auth::user()->can('reject_project_tracking'))){
+            return view('layouts.403');
+        }
+        $current_department_percentage = ReportProjectTracking::where('report_project_tracking.project_tracking_id', $id)
+                                                                ->where('report_project_tracking.reject_activity', null)
+                                                                ->join('department_activities', 'department_activities.id', '=', 'report_project_tracking.department_activity_id')
+                                                                ->sum('department_activities.acitvity_percentage');
+        if(!$current_department_percentage  == 0 ){
+            return redirect()->back()->with('warning', 'برای رد کردن یک پروسه فیصدی باید صفر (0) باشد.');
+
+        }
+        $request->validate([
+            // 'contract_budget' => ['required','numeric'],
+            // 'project_tracking_id'             => ['required','numeric'],
+            'reject_project_tracking_comment' => ['required','string'],
+        ]);
+
+        $project_tracking = new ProjectTracking();
+
+        $project_tracking_current = $project_tracking->where('id','=',$id)->first();
+        // dd($project_tracking_current);
+
+            $project_tracking_current->update([
+                'reject_project_tracking' => Carbon::now(),
+                'reject_project_tracking_comment' => $request->reject_project_tracking_comment,
+                'number' => '1',
+            ]);
+
+        $project_tracking_reject = $project_tracking->where('project_id','=',$project_tracking_current->project_id)
+                                    // ->where('reject_project_tracking','=',null)
+                                    ->where('reject_project_tracking','=',null)
+                                    ->orderByDesc('id')->first();
+
+            // dd($project_tracking_reject);
+            $project_tracking->project_id = $project_tracking_reject->project_id;
+            $project_tracking->department_id = $request->department_id;
+            $project_tracking->description = $request->reject_project_tracking_comment;
+        //     // $project_tracking->file = $path.$fileName;
+            $project_tracking->date_of_send = Carbon::now();
+            $project_tracking->save();
+
+        return redirect()->back()->with('warning', 'بخش انتخاب شده رد گردید.');
+    }
+
 }

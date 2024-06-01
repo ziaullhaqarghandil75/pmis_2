@@ -162,7 +162,7 @@ class UserController extends Controller
         // $update->roles()->sync($request->input('role_id'));
 
 
-        return redirect()->back()->with('success', ' معلومات شما ویرایش شد.');
+        return redirect()->back()->with('success', ' معلومات شما تصحیح شد.');
     }
 
     /**

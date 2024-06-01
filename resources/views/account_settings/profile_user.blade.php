@@ -61,7 +61,7 @@
                             <div class="tab-content">
                                 @can('edit_user')
                                     <div class="tab-pane active" id="setting" role="tabpanel">
-                                        <div class="card-body"> 
+                                        <div class="card-body">
                                             <form action="{{ route('user.update', $user->id) }}" method="POST" enctype="multipart/form-data" class="form-horizontal form-material">
                                                 @csrf
                                                 @method('put')
@@ -101,7 +101,7 @@
                                                         @enderror
                                                     </div>
                                                 </div>
-                                            
+
                                                 <div class="form-group">
                                                     <label class="col-md-12">تصویر</label>
                                                     <div class="col-md-12">
@@ -113,7 +113,7 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <div class="col-sm-12">
-                                                        <button class="btn btn-success text-white">ویرایش معلومات</button>
+                                                        <button class="btn btn-success text-white">تصحیح معلومات</button>
                                                     </div>
                                                 </div>
                                             </form>
@@ -123,7 +123,7 @@
                                 @can('change_password_user')
                                     <!-- Tab password -->
                                     <div class="tab-pane" id="password" role="tabpanel">
-                                        <div class="card-body"> 
+                                        <div class="card-body">
                                             <form action="{{ route('user.change_password', $user->id) }}" method="POST" enctype="multipart/form-data" class="form-horizontal form-material">
                                                 @csrf
                                                 @method('patch')
@@ -156,7 +156,7 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <div class="col-sm-12">
-                                                        <button class="btn btn-success text-white">ویرایش معلومات</button>
+                                                        <button class="btn btn-success text-white">تصحیح معلومات</button>
                                                     </div>
                                                 </div>
                                             </form>

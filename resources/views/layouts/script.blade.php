@@ -37,6 +37,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+
 @if($errors->any())
     @foreach($errors->all() as $error)
         <script>
@@ -92,3 +95,44 @@
         @endif
     </script>
 
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+    var deleteButtons = document.querySelectorAll('.delete-button');
+    deleteButtons.forEach(function (button) {
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+            var form = this.closest('form');
+            if (!form) {
+                console.error("No form found for the delete button.");
+                return;
+            }
+            swal({
+                title: "آیا مطمئن هستید؟",
+                text: "این عمل غیر قابل بازگشت خواهد بود!",
+                icon: "warning",
+                buttons: {
+                    cancel: "نخیر",
+                    confirm: {
+                        text: "بلی",
+                        value: true,
+                        visible: true,
+                        className: "",
+                        closeModal: true
+                    }
+                },
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                    if (willDelete) {
+                        // Disable the button to prevent multiple submissions
+                        button.disabled = true;
+                        form.submit();
+                    } else {
+                        swal("عملیات لغو شد!");
+                    }
+                });
+            });
+        });
+    });
+</script>

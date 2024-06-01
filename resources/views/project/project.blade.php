@@ -19,16 +19,16 @@
             </div>
             <div class="card-body">
             @can("add_project")
-                <div class="col-lg-2 col-md-4">
-                    <a href="{{ route('project.create') }}" class="btn w-100 btn-outline-info"><i class="fa fa-plus-circle"></i> افزودن پروژه جدید</a>
-                    <a href="{{ route('project.export') }}" class="btn w-100 btn-outline-info"><i class="fa fa-plus-circle"></i> دانلود</a>
+                <div class="col-lg-8 col-md-8">
+                    <a href="{{ route('project.create') }}" class="btn btn-outline-info"><i class="fa fa-plus-circle"></i> افزودن پروژه جدید</a>
+                    <a href="{{ route('project.export') }}" class="btn waves-effect waves-light btn-success"><i class="fa fa-plus-circle"></i> دانلود گزارش در اکسل</a>
                 </div>
             @endcan
             </div>
             <table id="config-table" class="table display table-striped border no-wrap">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        {{-- <th>#</th> --}}
                         <!-- <th>دسته بندی هدف</th> -->
                         <th>حالت فعلی</th>
 
@@ -49,11 +49,7 @@
                             @foreach($project_trackings as $key => $project_tracking )
                                 @if($project_tracking->project_id == $project->id)
                                     <tr>
-                                        <td>{{ $key+1 }}</td>
-                                        <td>{{ $project->name }}</td>
-                                        <td>@foreach($project->goal_category as $goal){{ $goal->name }} @endforeach</td>
-                                        <td>@foreach($project->districts as $district){{ $district->name }} @endforeach</td>
-                                        <td>{{ number_format($project->budgets()->first()->main_budget) }} افغانی</td>
+                                        {{-- <td>{{ $key+1 }}</td> --}}
                                         <?php
                                             $project_modes = App\Models\Project\ProjectTracking::with('project_departments','percentage_project_view')->where('project_id','=',$project_tracking->project_id)->orderByDesc('id')->first();
                                         ?>
@@ -61,9 +57,10 @@
                                         <td>
                                             @foreach($project_modes->project_departments as $project_department)
                                             <?php
-                                                $project_modes_p = 0;
+                                                // $project_modes_p = 0;
                                                 $project_modes_p = App\Models\Project\ReportProjectTracking::where('report_project_tracking.project_id', $project_modes->project_id)
                                                                                                             ->where('report_project_tracking.department_id', $project_modes->department_id)
+                                                                                                            ->where('report_project_tracking.project_tracking_id', $project_modes->id)
                                                                                                             ->where('report_project_tracking.reject_activity', null)
                                                                                                             ->join('department_activities', 'department_activities.id', '=', 'report_project_tracking.department_activity_id')
                                                                                                             ->sum('department_activities.acitvity_percentage');
@@ -72,7 +69,12 @@
                                                 <div class="progress m-t-20">
                                                 <div class="progress-bar bg-success" style="width: <?php echo $project_modes_p?>%; height:15px;" role="progressbar">{{ $project_modes_p }}%</div>
                                                 </div>
-                                            @endforeach</td>
+                                            @endforeach
+                                        </td>
+                                        <td>{{ $project->name }}</td>
+                                        <td>@foreach($project->goal_category as $goal){{ $goal->name }} @endforeach</td>
+                                        <td>@foreach($project->districts as $district){{ $district->name }} @endforeach</td>
+                                        <td>{{ number_format($project->budgets()->first()->main_budget) }} افغانی</td>
                                         <td>
                                             <div class="btn-group">
                                                 <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -84,7 +86,7 @@
 
                                                 @can('edit_project')
                                                 <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item bg-info " href="{{ route('project.edit',$project->id) }}" type="submit" class="btn btn-success text-white">ویرایش <i class="fas fa-eye-dropper"></i> </a>
+                                                <a class="dropdown-item bg-info " href="{{ route('project.edit',$project->id) }}" type="submit" class="btn btn-success text-white">تصحیح <i class="fas fa-edit"></i> </a>
                                                 @endcan
 
                                                 @can('delete_project')
@@ -104,7 +106,7 @@
                             @endforeach
                         @else
                             <tr>
-                                        <td>{{ $key+1 }}</td>
+                                        {{-- <td>{{ $key+1 }}</td> --}}
                                         <?php
                                         $project_modes = App\Models\Project\ProjectTracking::with('project_departments','percentage_project_view')->where('project_id','=',$project->id)->orderByDesc('id')->first();
                                         ?>
@@ -118,6 +120,7 @@
 
                                                     $project_modes_p = App\Models\Project\ReportProjectTracking::where('report_project_tracking.project_id', $project_modes->project_id)
                                                                                                             ->where('report_project_tracking.department_id', $project_modes->department_id)
+                                                                                                            ->where('report_project_tracking.project_tracking_id', $project_modes->id)
                                                                                                             ->where('report_project_tracking.reject_activity', null)
                                                                                                             ->join('department_activities', 'department_activities.id', '=', 'report_project_tracking.department_activity_id')
                                                                                                             ->sum('department_activities.acitvity_percentage');
@@ -154,7 +157,7 @@
                                                 <a  class="dropdown-item bg-info" href="{{ route('project.show',$project->id) }}" type="submit" class="btn btn-info text-white">توضیحات <i class="icons-Info-Window"></i> </a>
                                                 @can('edit_project')
                                                 <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item bg-info " href="{{ route('project.edit',$project->id) }}" type="submit" class="btn btn-success text-white">ویرایش <i class="fas fa-eye-dropper"></i> </a>
+                                                <a class="dropdown-item bg-info " href="{{ route('project.edit',$project->id) }}" type="submit" class="btn btn-success text-white">تصحیح <i class="fas fa-edit"></i> </a>
                                                 @endcan
 
                                                 @can('delete_project')

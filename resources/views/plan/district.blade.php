@@ -31,7 +31,7 @@
                                     @error('name')
                                     <p class="invalid-feedback">{{ $message }}</p>
                                     @enderror
-                                    
+
                                 </div>
                             </div>
                         </div>
@@ -46,7 +46,7 @@
                     @csrf
                     @method('put')
                     <div class="card-header bg-success">
-                        <h4 class="m-b-0 text-white">ویرایش ناحیه</h4>
+                        <h4 class="m-b-0 text-white">تصحیح ناحیه</h4>
                     </div>
                     <div class="card-body">
                     </div>
@@ -64,7 +64,7 @@
                         </div>
                         <div class="col-md-2">
                             <button type="submit" class="btn btn-success text-white"> <i class="fa fa-check"></i>
-                                    ویرایش</button>
+                                    تصحیح</button>
                         </div>
                     </div>
                 </form>
@@ -79,7 +79,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>نام</th>
-                                <th>ویرایش</th>
+                                <th>تصحیح</th>
                                 <th>حذف</th>
                             </tr>
                         </thead>
@@ -90,7 +90,7 @@
                                 <td>{{ $key++ }}</td>
                                 <td>{{$district->name}}</td>
                                 <td>
-                                    <a href="{{ route('district.edit',$district->id) }}" type="submit" class="btn btn-success text-white">ویرایش <i class="fas fa-eye-dropper"></i> </a>
+                                    <a href="{{ route('district.edit',$district->id) }}" type="submit" class="btn btn-success text-white">تصحیح <i class="fas fa-edit"></i> </a>
                                 </td>
                                 <td>
                                     <form action="{{ route('district.destroy',$district->id) }}" method="POST">

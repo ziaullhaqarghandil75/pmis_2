@@ -98,7 +98,7 @@ class DepratmentController extends Controller
             'status' => $request->status,
             'type_of_department' => $request->type_of_department,
         ]);
-        return redirect()->route('department.index')->with('success', ' معلومات دیپارتمنت شما ویرایش شد.');
+        return redirect()->route('department.index')->with('success', ' معلومات دیپارتمنت شما تصحیح شد.');
     }
     /**
      * Remove the specified resource from storage.

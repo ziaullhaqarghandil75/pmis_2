@@ -48,7 +48,7 @@
                     @csrf
                     @method('put')
                     <div class="card-header bg-success">
-                        <h4 class="m-b-0 text-white">ویرایش هدف</h4>
+                        <h4 class="m-b-0 text-white">تصحیح هدف</h4>
                     </div>
                     <div class="card-body">
                     </div>
@@ -82,7 +82,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>هدف</th>
-                                <th>ویرایش</th>
+                                <th>تصحیح</th>
                                 <th>حذف</th>
                             </tr>
                         </thead>
@@ -92,7 +92,7 @@
                                 <td>{{ $key+1 }}</td>
                                 <td>{{$goal->goal_name}}</td>
                                 <td>
-                                    <a href="{{ route('goal.edit',$goal->id) }}" type="submit" class="btn btn-success text-white">ویرایش <i class="fas fa-eye-dropper"></i> </a>
+                                    <a href="{{ route('goal.edit',$goal->id) }}" type="submit" class="btn btn-success text-white">تصحیح <i class="fas fa-edit"></i> </a>
                                 </td>
                                 <td>
                                     <form action="{{ route('goal.destroy',$goal->id) }}" method="POST">

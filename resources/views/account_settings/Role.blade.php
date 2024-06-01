@@ -116,7 +116,7 @@
                                     </form>
                                 </td>
                                 <td>
-                                    <a href="{{ route('role.edit',$role->id) }}" type="submit" class="btn btn-success text-white">افزودن سطوح دسترسی (permission) <i class="fas fa-eye-dropper"></i> </a>
+                                    <a href="{{ route('role.edit',$role->id) }}" type="submit" class="btn btn-success text-white">افزودن سطوح دسترسی (permission) <i class="fas fa-edit"></i> </a>
                                 </td>
                             </tr>
                         @endforeach

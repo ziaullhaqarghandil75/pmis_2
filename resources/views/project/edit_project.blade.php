@@ -10,7 +10,7 @@
     <div class="col-md-12 align-self-center text-end">
         <div class="d-flex justify-content-end align-items-center">
             <ol class="breadcrumb justify-content-end">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">ویرایش پروژه جدید</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">تصحیح پروژه جدید</a></li>
             <li class="breadcrumb-item"><a href="{{ route('project.index') }}">پروژه ها</a></li>
                 <li class="breadcrumb-item active">تنظیمات پروژه ها</li>
             </ol>
@@ -25,7 +25,7 @@
                 @csrf
                 @method('put')
                 <div class="card-header bg-success">
-                    <h4 class="m-b-0 text-white">ویرایش پروژه</h4>
+                    <h4 class="m-b-0 text-white">تصحیح پروژه</h4>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -209,7 +209,7 @@
                             <div class="form-actions">
                                 <div class="card-body">
                                     <button type="submit" class="btn btn-success text-white"> <i class="fa fa-check"></i>
-                                        ویرایش</button>
+                                        تصحیح</button>
                                 </div>
                             </div>
                     </div>

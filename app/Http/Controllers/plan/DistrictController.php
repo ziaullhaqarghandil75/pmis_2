@@ -15,9 +15,9 @@ class DistrictController extends Controller
     public function index()
     {
         if(!(auth::user()->can('view_district') and auth::user()->can('districts'))){
-            return view('layouts.403'); 
+            return view('layouts.403');
         }
-        
+
         $districts = District::get();
         $edit_district = false;
 
@@ -46,7 +46,7 @@ class DistrictController extends Controller
          $request->validate([
             'name' => 'string|required|unique:'.District::class,
         ]);
-      
+
         // here we will insert product in db
         $unit = new District();
         $unit->name = $request->name;
@@ -61,7 +61,7 @@ class DistrictController extends Controller
     public function show(string $id)
     {
         if(!(auth::user()->can('view_district') and auth::user()->can('districts'))){
-            return view('layouts.403'); 
+            return view('layouts.403');
         }
     }
 
@@ -89,12 +89,12 @@ class DistrictController extends Controller
         $request->validate([
             'name' => 'required',
         ]);
-       
+
         $update = District::find($id);
         $update->update([
             'name' => $request->name,
         ]);
-        return redirect()->route('district.index')->with('success', ' معلومات ناحیه شما ویرایش شد.');
+        return redirect()->route('district.index')->with('success', ' معلومات ناحیه شما تصحیح شد.');
     }
 
     /**

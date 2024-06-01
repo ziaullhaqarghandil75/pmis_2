@@ -103,7 +103,7 @@
                             <th>نوعیت دیپارتمنت</th>
                             <th>حالت</th>
                             @can('edit_department')
-                            <th>ویرایش</th>
+                            <th>تصحیح</th>
                             @endcan
                             @can('delete_department')
                             <th>حذف</th>
@@ -136,7 +136,7 @@
                             </td>
                             @can('edit_department')
                             <td>
-                                <a href="{{ route('department.edit',$department->id) }}" type="submit" class="btn btn-success text-white">ویرایش <i class="fas fa-eye-dropper"></i> </a>
+                                <a href="{{ route('department.edit',$department->id) }}" type="submit" class="btn btn-success text-white">تصحیح <i class="fas fa-edit"></i> </a>
                             </td>
                             @endcan
                             @can('delete_department')

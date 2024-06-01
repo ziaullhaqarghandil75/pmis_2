@@ -4,11 +4,13 @@ use App\Http\Controllers\AccountSetting\PermissionCategoryController;
 use App\Http\Controllers\AccountSetting\PermissionController;
 use App\Http\Controllers\AccountSetting\RoleController;
 use App\Http\Controllers\AccountSetting\UserController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\plan\DepratmentController;
 use App\Http\Controllers\Plan\DistrictController;
 use App\Http\Controllers\Plan\GoalCategoryController;
 use App\Http\Controllers\Plan\GoalController;
 use App\Http\Controllers\Plan\UnitController;
+use App\Http\Controllers\Procurement\CompanyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Project\DepartmentActivityController;
 use App\Http\Controllers\Project\ProjectController;
@@ -42,9 +44,11 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(
     function () {
-    Route::get('/', function () {
-        return view('dashboard');
-    });
+    // Route::get('/', function () {
+    //     return view('dashboard');
+    // });
+    Route::resource('/', DashboardController::class);
+
     //  start account settings
     Route::resource('/user', UserController::class);
     Route::patch('/change_password/{id}', [UserController::class, 'change_password'])->name('user.change_password');
@@ -68,23 +72,27 @@ Route::middleware('auth')->group(
     //  start project settings
     Route::resource('/project', ProjectController::class);
     Route::get('/export', [ProjectController::class,'export'])->name('project.export');
+
+    // project tracking
     Route::resource('/project_tracking', ProjectTrackingController::class);
     Route::patch('/budget_after_design/{id}', [ProjectTrackingController::class,'add_budget_after_design'])->name('budget_after_design.add_budget_after_design');
     Route::patch('/contract_budget/{id}', [ProjectTrackingController::class,'add_contract_budget'])->name('contract_budget.add_contract_budget');
+    Route::patch('/reject_project_tracking/{id}', [ProjectTrackingController::class,'reject_project_tracking'])->name('project_tracking.reject_project_tracking');
 
+    // report project tracking
     Route::post('/report_project_tracking', [ReportProjectTrackingController::class, 'store'])->name('report_project_tracking.store');
     Route::get('/report_project_tracking/{id}/department_id/{department_id}/project_tracking_id/{project_tracking_id}', [ReportProjectTrackingController::class, 'show'])->name('report_project_tracking.show');
     Route::patch('/reject_activity_reported', [ReportProjectTrackingController::class,'reject_activity'])->name('reject_activity_reported.reject_activity');
     Route::get('/procurement_type/{id}', [ProjectTrackingController::class,'changes_procurement_type'])->name('procurement_type.changes_procurement_type');
 
+    // department acitivity
     Route::resource('/department_activity', DepartmentActivityController::class);
     Route::get('/status_department_activity/{id}/department_id/{department_id}', [DepartmentActivityController::class,'status_department_activity'])->name('department_activity.status_department_activity');
 
-    //  start project settings
+    // procurement
+    Route::resource('/companies', CompanyController::class);
 
-    // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
 });
 
 require __DIR__ . '/auth.php';
